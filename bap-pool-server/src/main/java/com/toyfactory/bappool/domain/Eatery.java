@@ -1,11 +1,12 @@
 package com.toyfactory.bappool.domain;
 
-import com.sun.istack.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Lob;
+import javax.validation.constraints.NotNull;
 
 @Getter
 @NoArgsConstructor
@@ -16,4 +17,7 @@ public class Eatery {
 
     @NotNull
     private Long click;
+
+    @Lob
+    private String thumbnail;
 }
