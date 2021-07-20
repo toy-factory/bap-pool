@@ -1,5 +1,6 @@
 package com.toyfactory.bappool.domain;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -16,8 +17,15 @@ public class Eatery {
     private Long id;
 
     @NotNull
-    private Long click;
+    private int click;
 
     @Lob
     private String thumbnail;
+
+    @Builder
+    public Eatery(Long id, int click, String thumbnail) {
+        this.id = id;
+        this.click = click;
+        this.thumbnail = thumbnail;
+    }
 }
