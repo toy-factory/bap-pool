@@ -10,14 +10,12 @@ import theme from '#/styles/theme';
 import './global.css';
 
 const MyApp = ({ Component, pageProps }: AppProps) => (
-  <>
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <RecoilRoot>
-        <Component {...pageProps} />
-      </RecoilRoot>
-    </ThemeProvider>
-  </>
+  <ThemeProvider theme={theme}>
+    <CssBaseline />
+    <RecoilRoot>
+      <Component {...pageProps} />
+    </RecoilRoot>
+  </ThemeProvider>
 );
 
 export default MyApp;

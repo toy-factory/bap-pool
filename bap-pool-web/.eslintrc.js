@@ -13,7 +13,12 @@ module.exports = {
       jsx: true,
     },
   },
-  plugins: ['react', 'modules-newline', '@typescript-eslint'],
+  plugins: [
+    'react',
+    'react-hooks',
+    'modules-newline',
+    '@typescript-eslint',
+  ],
   extends: [
     'airbnb',
     'airbnb/hooks',
@@ -46,10 +51,13 @@ module.exports = {
     'modules-newline/export-declaration-newline': 'warn',
     'no-use-before-define': 'off',
     '@typescript-eslint/no-use-before-define': ['error'],
-    'import/order': ['error', {
-      'newlines-between': 'always-and-inside-groups',
-      groups: [['builtin', 'external'], 'internal'],
-    }],
+    'import/order': [
+      'error',
+      {
+        'newlines-between': 'always-and-inside-groups',
+        groups: [['builtin', 'external'], 'internal'],
+      },
+    ],
   },
   settings: {
     'import/resolver': {
