@@ -1,7 +1,12 @@
+import Header from '#/components/Header';
+import EateryCardList from '#/components/EateryCardList';
+import Template from '#/components/Template';
+
 const Home = () => (
-  <div>
-    Hello
-  </div>
+  <Template>
+    <Header />
+    <EateryCardList />
+  </Template>
 );
 
 export default Home;
