@@ -70,6 +70,10 @@ const EateryCard = ({
     setDeltaX(0);
   }, []);
 
+  const onDragStart = useCallback(() => {
+
+  }, []);
+
   return (
     <Card
       style={{ transform: `translateX(${deltaX}px)` }}
@@ -77,6 +81,7 @@ const EateryCard = ({
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
+      onDragStart={onDragStart}
     >
       <div className={classes.imageContainer}>
         <Image src={thumbnail} alt="thumbnail" layout="fill" objectFit="contain" draggable={false} />
