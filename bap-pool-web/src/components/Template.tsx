@@ -16,13 +16,14 @@ const useStyles = makeStyles((theme) => ({
 
 interface TemplateProps {
   children: React.ReactNode;
+  className?: string;
 }
 
-const Template = ({ children }: TemplateProps) => {
+const Template = ({ children, className }: TemplateProps) => {
   const classes = useStyles();
 
   return (
-    <div className={classes.root}>
+    <div className={[className, classes.root].join(' ')}>
       <main className={classes.main}>
         {children}
       </main>

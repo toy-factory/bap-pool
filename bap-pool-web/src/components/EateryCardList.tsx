@@ -1,13 +1,16 @@
 import {
-  useCallback,
+  useMemo,
   useRef,
   useState,
+  useCallback,
 } from 'react';
 import {
   makeStyles,
 } from '@material-ui/core';
 
 import EateryCard from './EateryCard';
+import { EateryData } from '#/types/Eatery';
+import Util from '#/Util';
 
 const useStyles = makeStyles({
   root: {
@@ -18,48 +21,53 @@ const useStyles = makeStyles({
   },
 });
 
-const EATERY_LIST = [
+interface Eatery {
+  id: string;
+  data?: EateryData;
+}
+
+const EATERY_LIST: Eatery[] = [
   {
-    id: 1,
+    id: '1',
     data: {
-      thumbnail: '/static/bapoori.png',
+      thumbnail: '/bapoori.png',
       placeName: '원래는',
       click: 12,
       distance: 123,
     },
   },
   {
-    id: 2,
+    id: '2',
     data: {
-      thumbnail: '/static/bapoori.png',
+      thumbnail: '/bapoori.png',
       placeName: '원래는 삼겹살',
       click: 12,
       distance: 123,
     },
   },
   {
-    id: 3,
+    id: '3',
     data: {
-      thumbnail: '/static/bapoori.png',
+      thumbnail: '/bapoori.png',
       placeName: '원래는 삼겹살 집을',
       click: 12,
       distance: 123,
     },
   },
   {
-    id: 4,
+    id: '4',
     data: {
-      thumbnail: '/static/bapoori.png',
+      thumbnail: '/bapoori.png',
       placeName: '원래는 삼겹살 집을 하려고',
       click: 12,
       distance: 123,
     },
   },
   {
-    id: 5,
+    id: '5',
     data: {
-      thumbnail: '/static/bapoori.png',
-      placeName: '원래는 삼겹살 집을 하려고 했었다.',
+      thumbnail: '/bapoori.png',
+      placeName: '원래는 삼겹살 집을 하려고 했었다',
       click: 12,
       distance: 123,
     },
@@ -68,14 +76,50 @@ const EATERY_LIST = [
 
 const EateryCardList = () => {
   const classes = useStyles();
-  const [eateries, setEateries] = useState(() => EATERY_LIST);
+  const [eateries, setEateries] = useState<Eatery[]>(() => EATERY_LIST);
+  const widthRef = useRef<HTMLDivElement>(null);
+
+  const cardWidth = useMemo(() => {
+    if (widthRef.current == null) {
+      return 360;
+    }
+
+    return widthRef.current.clientWidth;
+  }, []);
+
+  const getEatery = useCallback(async () => new Promise((resolve) => {
+    setTimeout(() => {
+      resolve({ id: Util.getRandomId(), data: EATERY_LIST[0].data });
+    }, 1000);
+  }), []);
+
+  const handleRemove = useCallback(async (id: string) => {
+    const indexToRemove = eateries.findIndex((eatery) => eatery.id === id);
+    if (indexToRemove === -1) {
+      return;
+    }
+
+    const removedEateries = [...eateries];
+    removedEateries[indexToRemove] = { id: eateries[indexToRemove].id, data: undefined };
+    setEateries(removedEateries);
+
+    const newEatery = await getEatery();
+    setEateries((prevEateries) => {
+      const newEateries = [...prevEateries];
+      newEateries[indexToRemove] = newEatery as Eatery;
+      return newEateries;
+    });
+  }, [eateries, getEatery]);
 
   return (
-    <div className={classes.root}>
+    <div className={classes.root} ref={widthRef}>
       {eateries.map((eatery) => (
         <EateryCard
           key={eatery.id}
-          {...eatery.data}
+          id={eatery.id}
+          cardWidth={cardWidth}
+          handleRemove={handleRemove}
+          data={eatery.data}
         />
       ))}
     </div>
