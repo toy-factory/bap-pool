@@ -1,26 +1,17 @@
 import React, {
-  HTMLAttributes,
-  useState,
   useCallback,
 } from 'react';
 import Image from 'next/image';
 import makeStyles from '@material-ui/core/styles/makeStyles';
-import Card from '@material-ui/core/Card';
 import Typography from '@material-ui/core/Typography';
+import Skeleton from '@material-ui/lab/Skeleton';
 
-import Colors from '#/styles/Colors';
+import RemovableCard from './RemovableCard';
+import { EateryData } from '#/types/Eatery';
 
 const useStyles = makeStyles({
-  root: {
-    display: 'flex',
-    flexDirection: 'column',
-    width: '100%',
-    minHeight: '12rem',
-    boxShadow: `1px 1px 1px 1px ${Colors.gray}`,
-    position: 'relative',
-    userSelect: 'none',
-    cursor: 'grab',
-    touchAction: 'none',
+  removableCard: {
+    paddingTop: 0,
   },
   imageContainer: {
     display: 'flex',
@@ -41,63 +32,48 @@ const useStyles = makeStyles({
 });
 
 interface EateryCardProps {
-  thumbnail: string;
-  placeName: string;
-  click: number;
-  distance: number;
+  cardWidth: number;
+  handleRemove: (id: string) => Promise<void>;
+  id: string;
+  data?: EateryData;
 }
 
 const EateryCard = ({
-  thumbnail, placeName, click, distance, ...otherProps
-}: EateryCardProps & HTMLAttributes<HTMLDivElement>) => {
+  cardWidth,
+  handleRemove,
+  id,
+  data,
+}: EateryCardProps) => {
   const classes = useStyles();
-  const [deltaX, setDeltaX] = useState(0);
-  const [startX, setStartX] = useState(0);
 
-  const handleTouchStart = useCallback((e) => {
-    const [lastTouch] = e.touches;
-    setStartX(lastTouch.screenX);
-  }, []);
-
-  const handleTouchMove = useCallback((e) => {
-    const [lastTouch] = e.touches;
-    setDeltaX(lastTouch.screenX - startX);
-  }, [startX]);
-
-  const handleTouchEnd = useCallback((e) => {
-    e.preventDefault();
-    setStartX(0);
-    setDeltaX(0);
-  }, []);
-
-  const onDragStart = useCallback(() => {
-
-  }, []);
+  const swipeCallback = useCallback(() => {
+    handleRemove(id);
+  }, [handleRemove, id]);
 
   return (
-    <Card
-      style={{ transform: `translateX(${deltaX}px)` }}
-      className={classes.root}
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
-      onDragStart={onDragStart}
+    <RemovableCard
+      disabled={data == null}
+      className={classes.removableCard}
+      cardWidth={cardWidth}
+      swipeCallback={swipeCallback}
     >
       <div className={classes.imageContainer}>
-        <Image src={thumbnail} alt="thumbnail" layout="fill" objectFit="contain" draggable={false} />
+        {data == null
+          ? <Skeleton variant="rect" width="100%" height="100%" />
+          : <Image src={data.thumbnail} alt="thumbnail" layout="fill" objectFit="contain" draggable={false} />}
       </div>
       <div className={classes.cardContents}>
         <Typography variant="h5" component="h2">
-          {placeName}
+          {data == null ? <Skeleton /> : data.placeName}
         </Typography>
         <Typography className={classes.pos} color="textSecondary">
-          {`다른 바푸리가 ${click}번 클릭했어요.`}
+          {data == null ? <Skeleton /> : `다른 바푸리가 ${data.click}번 클릭했어요.`}
         </Typography>
         <Typography variant="body2" component="p">
-          {`${distance}m 거리에 있습니다.`}
+          {data == null ? <Skeleton /> : `${data.distance}m 거리에 있습니다.`}
         </Typography>
       </div>
-    </Card>
+    </RemovableCard>
   );
 };
 
