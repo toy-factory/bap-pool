@@ -31,7 +31,6 @@ public class EateryService {
 
 	@Value("${api-key}")
 	private String apiKey;
-	// TODO: 추후에 config 파일로 변경
 
 	private String create(EateryCreate request) {
 		Eatery eatery = request.toEntity();
@@ -96,7 +95,7 @@ public class EateryService {
 			.queryParam("place_id", id)
 			.queryParam("fields", "url")
 			.queryParam("key", apiKey)
-			.build(false);
+			.build(true);
 
 		ResponseEntity<GooglePlaceDetailResponse> response = setRestTemplate().getForEntity(uriComponents.toUriString(),
 			GooglePlaceDetailResponse.class);
