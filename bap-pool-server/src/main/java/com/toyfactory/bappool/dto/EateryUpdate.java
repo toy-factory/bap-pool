@@ -22,6 +22,12 @@ public class EateryUpdate {
 		this.url = url;
 	}
 
+	public EateryUpdate(Eatery eatery) {
+		this.id = eatery.getId();
+		this.click = eatery.getClick() + 1;
+		this.url = eatery.getUrl();
+	}
+
 	public Eatery toEntity(String id) {
 		return Eatery.builder()
 			.id(id)

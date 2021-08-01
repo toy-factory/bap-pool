@@ -80,6 +80,14 @@ public class EateryService {
 		eateryRepository.save(newEatery);
 	}
 
+	public void updateClickById(String id) {
+		Eatery eatery = eateryRepository.findById(id)
+			.orElseThrow(() -> new EntityNotFoundException("해당하는 Eatery를 찾을 수 없습니다."));
+
+		EateryUpdate updateEatery = new EateryUpdate(eatery);
+		Eatery newEatery = updateEatery.toEntity(id);
+		eateryRepository.save(newEatery);
+	}
 
 	private GooglePlaceDetailResultResponse callGooglePlaceDetailApi(String id) {
 		String baseUrl = "https://maps.googleapis.com/maps/api/place/details/json";
@@ -123,4 +131,5 @@ public class EateryService {
 
 		return new RestTemplate(factory);
 	}
+
 }
