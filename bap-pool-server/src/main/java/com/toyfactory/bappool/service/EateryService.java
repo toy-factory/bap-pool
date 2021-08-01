@@ -95,7 +95,7 @@ public class EateryService {
 			.queryParam("place_id", id)
 			.queryParam("fields", "url")
 			.queryParam("key", apiKey)
-			.build(true);
+			.build();
 
 		ResponseEntity<GooglePlaceDetailResponse> response = setRestTemplate().getForEntity(uriComponents.toUriString(),
 			GooglePlaceDetailResponse.class);
@@ -114,7 +114,7 @@ public class EateryService {
 			.queryParam("type", "restaurant")
 			.queryParam("opennow", true)
 			.queryParam("key", apiKey)
-			.build(false);
+			.build();
 
 		ResponseEntity<GooglePlaceSearchResponse> response = setRestTemplate().getForEntity(uriComponents.toUriString(),
 			GooglePlaceSearchResponse.class);
