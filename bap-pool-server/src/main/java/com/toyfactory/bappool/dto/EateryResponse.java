@@ -35,7 +35,7 @@ public class EateryResponse {
 		this.url = eateryDetail.getUrl();
 	}
 
-	private static double distanceMeter(double curLat, double curLng, GooglePlaceSearchLocationResponse location) {
+	private double distanceMeter(double curLat, double curLng, GooglePlaceSearchLocationResponse location) {
 		double desLat = location.getLat();
 		double desLng = location.getLng();
 
