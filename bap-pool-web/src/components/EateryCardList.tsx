@@ -1,8 +1,8 @@
 import {
-  useMemo,
   useRef,
   useState,
   useCallback,
+  useEffect,
 } from 'react';
 import {
   makeStyles,
@@ -11,6 +11,7 @@ import {
 import EateryCard from './EateryCard';
 import { EateryData } from '#/types/Eatery';
 import Util from '#/Util';
+import useWindowSize from '#/hooks/useWindowSize';
 
 const useStyles = makeStyles({
   root: {
@@ -77,15 +78,10 @@ const EATERY_LIST: Eatery[] = [
 const EateryCardList = () => {
   const classes = useStyles();
   const [eateries, setEateries] = useState<Eatery[]>(() => EATERY_LIST);
-  const widthRef = useRef<HTMLDivElement>(null);
 
-  const cardWidth = useMemo(() => {
-    if (widthRef.current == null) {
-      return 360;
-    }
-
-    return widthRef.current.clientWidth;
-  }, []);
+  const eateryCardListRef = useRef<HTMLDivElement>(null);
+  const [cardWidth, setCardWidth] = useState(360);
+  const { width: windowWidth } = useWindowSize();
 
   const getEatery = useCallback(async () => new Promise((resolve) => {
     setTimeout(() => {
@@ -95,9 +91,7 @@ const EateryCardList = () => {
 
   const handleRemove = useCallback(async (id: string) => {
     const indexToRemove = eateries.findIndex((eatery) => eatery.id === id);
-    if (indexToRemove === -1) {
-      return;
-    }
+    if (indexToRemove === -1) return;
 
     const removedEateries = [...eateries];
     removedEateries[indexToRemove] = { id: eateries[indexToRemove].id, data: undefined };
@@ -111,8 +105,14 @@ const EateryCardList = () => {
     });
   }, [eateries, getEatery]);
 
+  useEffect(() => {
+    if (eateryCardListRef.current == null) return;
+
+    setCardWidth(eateryCardListRef.current.clientWidth);
+  }, [windowWidth]);
+
   return (
-    <div className={classes.root} ref={widthRef}>
+    <div className={classes.root} ref={eateryCardListRef}>
       {eateries.map((eatery) => (
         <EateryCard
           key={eatery.id}
