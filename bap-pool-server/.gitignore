@@ -39,5 +39,5 @@ out/
 ### API KEY ###
 src/main/resources/application-API-KEY.properties
 
-### Database ###
-src/main/resources/application-prod.properties
+### Production ###
+src/main/resources-prod/
