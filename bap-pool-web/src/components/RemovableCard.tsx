@@ -1,9 +1,4 @@
 import {
-  useState,
-  useCallback,
-  useRef,
-  MouseEvent,
-  TouchEvent,
   ReactNode,
 } from 'react';
 import {
