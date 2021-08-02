@@ -1,9 +1,4 @@
 import {
-  useState,
-  useCallback,
-  useRef,
-  MouseEvent,
-  TouchEvent,
   ReactNode,
 } from 'react';
 import {
@@ -13,6 +8,7 @@ import {
 } from '@material-ui/core';
 
 import Colors from '#/styles/Colors';
+import useRemovableEvents from '#/hooks/useRemovableEvents';
 
 const useStyles = makeStyles({
   card: {
@@ -50,67 +46,10 @@ const RemovableCard = ({
   const classes = useStyles();
   const theme = useTheme();
 
-  const [deltaX, setDeltaX] = useState(0);
-  const [startX, setStartX] = useState(0);
-
-  const handleTouchStart = useCallback((e: TouchEvent<HTMLDivElement>) => {
-    setStartX(e.touches[0].screenX);
-  }, []);
-
-  const handleTouchMove = useCallback((e: TouchEvent<HTMLDivElement>) => {
-    setDeltaX(e.touches[0].screenX - startX);
-  }, [startX]);
-
-  const handleTouchEnd = useCallback(() => {
-    if (Math.abs(deltaX) > Math.round(cardWidth / 2)) {
-      swipeCallback();
-      // onDelete();
-    }
-    setStartX(0);
-    setDeltaX(0);
-  }, [deltaX, cardWidth, swipeCallback]);
-
-  const draggingItemRef = useRef<MouseEvent<HTMLDivElement>>();
-
-  const handleMouseDown = useCallback((e: MouseEvent<HTMLDivElement>) => {
-    draggingItemRef.current = e;
-    setStartX(e.screenX);
-  }, []);
-
-  const handleMouseMove = useCallback((e: MouseEvent<HTMLDivElement>) => {
-    if (draggingItemRef.current == null) {
-      return;
-    }
-    setDeltaX(e.screenX - startX);
-  }, [startX]);
-
-  const resetMouseEvent = useCallback(() => {
-    draggingItemRef.current = undefined;
-    setStartX(0);
-    setDeltaX(0);
-
-    if (Math.abs(deltaX) > Math.round(cardWidth / 2)) {
-      swipeCallback();
-    }
-  }, [deltaX, cardWidth, swipeCallback]);
-
-  const handleMouseUp = useCallback(() => {
-    resetMouseEvent();
-  }, [resetMouseEvent]);
-
-  const handleMouseLeave = useCallback(() => {
-    resetMouseEvent();
-  }, [resetMouseEvent]);
-
-  if (disabled) {
-    return (
-      <Card
-        className={[className ?? '', classes.card].join(' ')}
-      >
-        {children}
-      </Card>
-    );
-  }
+  const { deltaX, ...removableEvents } = useRemovableEvents({
+    threshold: cardWidth / 2,
+    onRemove: swipeCallback,
+  });
 
   return (
     <div
@@ -121,15 +60,9 @@ const RemovableCard = ({
       } : undefined}
     >
       <Card
-        style={{ transform: `translateX(${deltaX}px)` }}
-        className={[className ?? '', classes.grab, classes.card].join(' ')}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseLeave}
+        style={{ transform: `translateX(${deltaX}px)`, cursor: disabled ? 'default' : 'grab' }}
+        className={[className ?? '', classes.card].join(' ')}
+        {...(disabled ? {} : removableEvents)}
       >
         {children}
       </Card>
