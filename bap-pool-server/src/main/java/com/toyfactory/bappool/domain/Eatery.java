@@ -1,5 +1,6 @@
 package com.toyfactory.bappool.domain;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -13,11 +14,21 @@ import javax.validation.constraints.NotNull;
 @Entity
 public class Eatery {
     @Id
-    private Long id;
+    private String id;
 
     @NotNull
-    private Long click;
+    private int click;
 
-    @Lob
+    private String url;
+
     private String thumbnail;
+
+    @Builder
+    public Eatery(String id, int click, String url, String thumbnail) {
+        this.id = id;
+        this.click = click;
+        this.url = url;
+        this.thumbnail = thumbnail;
+    }
+
 }
