@@ -1,5 +1,6 @@
 import React, {
   useCallback,
+  CSSProperties,
 } from 'react';
 import Image from 'next/image';
 import makeStyles from '@material-ui/core/styles/makeStyles';
@@ -35,6 +36,7 @@ interface EateryCardProps {
   cardWidth: number;
   handleRemove: (id: string) => Promise<void>;
   id: string;
+  style?: CSSProperties;
   data?: EateryData;
 }
 
@@ -42,6 +44,7 @@ const EateryCard = ({
   cardWidth,
   handleRemove,
   id,
+  style,
   data,
 }: EateryCardProps) => {
   const classes = useStyles();
@@ -52,6 +55,7 @@ const EateryCard = ({
 
   return (
     <RemovableCard
+      style={style}
       disabled={data == null}
       className={classes.removableCard}
       cardWidth={cardWidth}

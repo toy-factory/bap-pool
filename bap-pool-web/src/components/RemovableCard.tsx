@@ -1,4 +1,5 @@
 import {
+  CSSProperties,
   ReactNode,
 } from 'react';
 import {
@@ -32,6 +33,7 @@ interface RemovableCardProps {
   cardWidth: number;
   swipeCallback: () => void;
   children: ReactNode;
+  style?: CSSProperties;
   className?: string;
   disabled?: boolean;
 }
@@ -40,6 +42,7 @@ const RemovableCard = ({
   cardWidth,
   swipeCallback,
   children,
+  style,
   className,
   disabled,
 }: RemovableCardProps) => {
@@ -53,11 +56,14 @@ const RemovableCard = ({
 
   return (
     <div
-      style={deltaX !== 0 ? {
-        backgroundColor: theme.palette.error.main,
-        opacity: 0.5,
-        transition: 'opacity 0.2s ease',
-      } : undefined}
+      style={{
+        ...style,
+        ...(deltaX !== 0 ? {
+          backgroundColor: theme.palette.error.main,
+          opacity: 0.5,
+          transition: 'opacity 0.2s ease',
+        } : {}),
+      }}
     >
       <Card
         style={{ transform: `translateX(${deltaX}px)`, cursor: disabled ? 'default' : 'grab' }}

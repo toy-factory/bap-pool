@@ -13,11 +13,12 @@ import { EateryData } from '#/types/Eatery';
 import Util from '#/Util';
 
 const useStyles = makeStyles({
-  root: {
+  list: {
     display: 'flex',
     flexDirection: 'column',
     gap: '0.5rem',
     margin: '1rem 0',
+    position: 'relative',
   },
 });
 
@@ -112,9 +113,16 @@ const EateryCardList = () => {
   }, [eateries, getEatery]);
 
   return (
-    <div className={classes.root} ref={widthRef}>
+    <div className={classes.list} ref={widthRef}>
       {eateries.map((eatery) => (
         <EateryCard
+          style={{
+            transform: 'scale(0.7)',
+            width: '70%',
+            position: 'absolute',
+            top: Math.random() * 100,
+            left: Math.random() * 100,
+          }}
           key={eatery.id}
           id={eatery.id}
           cardWidth={cardWidth}

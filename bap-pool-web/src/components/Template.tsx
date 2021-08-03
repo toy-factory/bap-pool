@@ -4,6 +4,7 @@ const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
     justifyContent: 'center',
+    minHeight: '100vh',
   },
   main: {
     flexGrow: 1,
