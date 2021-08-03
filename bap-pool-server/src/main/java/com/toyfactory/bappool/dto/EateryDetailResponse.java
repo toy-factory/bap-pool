@@ -9,12 +9,15 @@ public class EateryDetailResponse {
 	private String id;
 	private int click;
 	private String url;
-	private String thumbnail;
+	private String thumbnailUrl;
 
-	public EateryDetailResponse(Eatery eatery) {
+	public EateryDetailResponse(Eatery eatery, String apiKey) {
 		this.id = eatery.getId();
 		this.click = eatery.getClick();
 		this.url = eatery.getUrl();
-		this.thumbnail = eatery.getThumbnail();
+		this.thumbnailUrl = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=500&photoreference="
+						+ eatery.getPhotoReference()
+						+ "&key="
+						+ apiKey;
 	}
 }

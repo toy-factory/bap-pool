@@ -21,14 +21,15 @@ public class Eatery {
 
     private String url;
 
-    private String thumbnail;
+    @Lob
+    private String photoReference;
 
     @Builder
-    public Eatery(String id, int click, String url, String thumbnail) {
+    public Eatery(String id, int click, String url, String photoReference) {
         this.id = id;
         this.click = click;
         this.url = url;
-        this.thumbnail = thumbnail;
+        this.photoReference = photoReference;
     }
 
 }
