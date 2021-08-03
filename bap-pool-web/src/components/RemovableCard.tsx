@@ -44,7 +44,7 @@ const RemovableCard = ({
   children,
   style,
   className,
-  disabled,
+  disabled = false,
 }: RemovableCardProps) => {
   const classes = useStyles();
   const theme = useTheme();

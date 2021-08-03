@@ -26,7 +26,6 @@ const useRemovableEvents = ({ threshold, onRemove }: useRemovableEventsProps) =>
   const handleTouchEnd = useCallback(() => {
     if (Math.abs(deltaX) > Math.round(threshold)) {
       onRemove();
-      // onDelete();
     }
     setStartX(0);
     setDeltaX(0);
@@ -43,6 +42,7 @@ const useRemovableEvents = ({ threshold, onRemove }: useRemovableEventsProps) =>
     if (draggingItemRef.current == null) {
       return;
     }
+
     setDeltaX(e.screenX - startX);
   }, [startX]);
 
