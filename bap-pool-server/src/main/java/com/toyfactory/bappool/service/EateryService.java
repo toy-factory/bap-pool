@@ -18,6 +18,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -47,9 +48,12 @@ public class EateryService {
 		places.forEach(place -> {
 			String id = place.getPlace_id();
 			if (!eateryRepository.existsById(id)) {
-				EateryCreate request = new EateryCreate(id, 0);
+				String photoReference = Optional.ofNullable(place.getPhotos().get(0).getPhoto_reference())
+									.orElse(null);
+				EateryCreate request = new EateryCreate(id, 0, photoReference);
 				create(request);
 			}
+
 			EateryResponse response = new EateryResponse(place, lat, lng);
 			if (openPlace.size() < 5) {
 				EateryDetailResponse eateryDetail = findById(id);
@@ -63,15 +67,14 @@ public class EateryService {
 	public EateryDetailResponse findById(String id) {
 		Eatery eatery = eateryRepository.findById(id)
 			.orElseThrow(() -> new EntityNotFoundException("해당하는 Eatery를 찾을 수 없습니다."));
+		String url = eatery.getUrl();
 
-		if (eatery.getUrl() == null) {
-			String url = callGooglePlaceDetailApi(id).getUrl();
-			// TODO: 썸네일 처리
-			EateryUpdate updateEatery = new EateryUpdate(eatery, url, null);
-			updateById(id, updateEatery);
+		if (url == null) {
+			url = callGooglePlaceDetailApi(id).getUrl();
+			updateById(id, new EateryUpdate(eatery, url));
 		}
 
-		return new EateryDetailResponse(eatery);
+		return new EateryDetailResponse(eatery, apiKey);
 	}
 
 	private void updateById(String id, EateryUpdate updateEatery) {
