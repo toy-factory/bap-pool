@@ -18,6 +18,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import javax.persistence.EntityNotFoundException;
@@ -48,8 +49,13 @@ public class EateryService {
 		places.forEach(place -> {
 			String id = place.getPlace_id();
 			if (!eateryRepository.existsById(id)) {
-				String photoReference = Optional.ofNullable(place.getPhotos().get(0).getPhoto_reference())
-									.orElse(null);
+
+				String photoReference = Optional.ofNullable(place.getPhotos())
+					.flatMap(ref -> ref.stream()
+							.findFirst()
+							.map(GooglePlaceSearchPhotoResponse::getPhoto_reference))
+					.orElse(null);
+
 				EateryCreate request = new EateryCreate(id, 0, photoReference);
 				create(request);
 			}
