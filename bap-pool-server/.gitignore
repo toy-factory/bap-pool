@@ -37,7 +37,7 @@ out/
 .vscode/
 
 ### API KEY ###
-src/main/resources/application-API-KEY.properties
+src/main/resources/application-API-KEY.yml
 
 ### Production ###
 src/main/resources-prod/
