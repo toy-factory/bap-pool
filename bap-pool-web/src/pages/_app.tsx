@@ -1,5 +1,8 @@
 import React from 'react';
-import { AppProps } from 'next/app';
+import {
+  AppProps,
+} from 'next/app';
+import Head from 'next/head';
 import { RecoilRoot } from 'recoil';
 import {
   CssBaseline,
@@ -10,12 +13,17 @@ import theme from '#/styles/theme';
 import './global.css';
 
 const MyApp = ({ Component, pageProps }: AppProps) => (
-  <ThemeProvider theme={theme}>
-    <CssBaseline />
-    <RecoilRoot>
-      <Component {...pageProps} />
-    </RecoilRoot>
-  </ThemeProvider>
+  <>
+    <Head>
+      <title>밥풀</title>
+    </Head>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <RecoilRoot>
+        <Component {...pageProps} />
+      </RecoilRoot>
+    </ThemeProvider>
+  </>
 );
 
 export default MyApp;
