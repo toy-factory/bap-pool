@@ -7,7 +7,9 @@ import makeStyles from '@material-ui/core/styles/makeStyles';
 import Typography from '@material-ui/core/Typography';
 import Skeleton from '@material-ui/lab/Skeleton';
 
-import RemovableCard from './RemovableCard';
+import { CardProps } from '@material-ui/core';
+
+import RemovableCard from '../RemovableCard';
 import { EateryData } from '#/types/Eatery';
 
 const useStyles = makeStyles({
@@ -36,7 +38,6 @@ interface EateryCardProps {
   cardWidth: number;
   handleRemove: (id: string) => Promise<void>;
   id: string;
-  style?: CSSProperties;
   data?: EateryData;
 }
 
@@ -44,7 +45,6 @@ const EateryCard = ({
   cardWidth,
   handleRemove,
   id,
-  style,
   data,
 }: EateryCardProps) => {
   const classes = useStyles();
@@ -55,7 +55,6 @@ const EateryCard = ({
 
   return (
     <RemovableCard
-      style={style}
       disabled={data == null}
       className={classes.removableCard}
       cardWidth={cardWidth}

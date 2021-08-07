@@ -1,4 +1,5 @@
 import { makeStyles } from '@material-ui/core';
+import { ReactNode } from 'react';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -16,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 interface TemplateProps {
-  children: React.ReactNode;
+  children: ReactNode;
   className?: string;
 }
 

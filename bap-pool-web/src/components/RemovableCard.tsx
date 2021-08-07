@@ -3,31 +3,11 @@ import {
   ReactNode,
 } from 'react';
 import {
-  Card,
-  makeStyles,
   useTheme,
 } from '@material-ui/core';
 
-import Colors from '#/styles/Colors';
 import useRemovableEvents from '#/hooks/useRemovableEvents';
-
-const useStyles = makeStyles({
-  card: {
-    display: 'flex',
-    flexDirection: 'column',
-    width: '100%',
-    minHeight: '12rem',
-    boxShadow: `1px 1px 1px 1px ${Colors.gray}`,
-    position: 'relative',
-    userSelect: 'none',
-    touchAction: 'none',
-    transition: 'transform 0.1s ease',
-    overflow: 'hidden',
-  },
-  grab: {
-    cursor: 'grab',
-  },
-});
+import EateryCardBase from './Card/EateryCardBase';
 
 interface RemovableCardProps {
   cardWidth: number;
@@ -46,7 +26,6 @@ const RemovableCard = ({
   className,
   disabled = false,
 }: RemovableCardProps) => {
-  const classes = useStyles();
   const theme = useTheme();
 
   const { deltaX, ...removableEvents } = useRemovableEvents({
@@ -65,13 +44,13 @@ const RemovableCard = ({
         } : {}),
       }}
     >
-      <Card
+      <EateryCardBase
         style={{ transform: `translateX(${deltaX}px)`, cursor: disabled ? 'default' : 'grab' }}
-        className={[className ?? '', classes.card].join(' ')}
+        className={className}
         {...(disabled ? {} : removableEvents)}
       >
         {children}
-      </Card>
+      </EateryCardBase>
     </div>
   );
 };

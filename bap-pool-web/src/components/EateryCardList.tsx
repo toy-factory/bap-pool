@@ -8,10 +8,12 @@ import {
   makeStyles,
 } from '@material-ui/core';
 
-import EateryCard from './EateryCard';
+import EateryCard from './Card/EateryCard';
 import { EateryData } from '#/types/Eatery';
 import Util from '#/Util';
 import useWindowSize from '#/hooks/useWindowSize';
+import FlippableCard from './FlippableCard';
+import FlippedCard from './FlippedCard';
 
 const useStyles = makeStyles({
   list: {
@@ -19,7 +21,6 @@ const useStyles = makeStyles({
     flexDirection: 'column',
     gap: '0.5rem',
     margin: '1rem 0',
-    position: 'relative',
   },
 });
 
@@ -114,20 +115,21 @@ const EateryCardList = () => {
 
   return (
     <div className={classes.list} ref={eateryCardListRef}>
-      {eateries.map((eatery) => (
-        <EateryCard
-          style={{
-            transform: 'scale(0.7)',
-            width: '70%',
-            position: 'absolute',
-            top: Math.random() * 100,
-            left: Math.random() * 100,
-          }}
+      {eateries.map((eatery, i) => (
+        <FlippableCard
           key={eatery.id}
-          id={eatery.id}
-          cardWidth={cardWidth}
-          handleRemove={handleRemove}
-          data={eatery.data}
+          front={(
+            <EateryCard
+              id={eatery.id}
+              cardWidth={cardWidth}
+              handleRemove={handleRemove}
+              data={eatery.data}
+            />
+          )}
+          back={(
+            <FlippedCard />
+          )}
+          isFlipped={Number(eatery.id) % 2 === 1}
         />
       ))}
     </div>
