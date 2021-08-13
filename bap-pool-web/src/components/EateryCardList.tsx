@@ -2,18 +2,14 @@ import {
   useRef,
   useState,
   useCallback,
-  useEffect,
 } from 'react';
 import {
   makeStyles,
 } from '@material-ui/core';
 
-import EateryCard from './Card/EateryCard';
 import { EateryData } from '#/types/Eatery';
 import Util from '#/Util';
-import useWindowSize from '#/hooks/useWindowSize';
-import FlippableCard from './FlippableCard';
-import FlippedCard from './FlippedCard';
+import EateryCard from './EateryCard/EateryCard';
 
 const useStyles = makeStyles({
   list: {
@@ -82,8 +78,6 @@ const EateryCardList = () => {
   const [eateries, setEateries] = useState<Eatery[]>(() => EATERY_LIST);
 
   const eateryCardListRef = useRef<HTMLDivElement>(null);
-  const [cardWidth, setCardWidth] = useState(360);
-  const { width: windowWidth } = useWindowSize();
 
   const getEatery = useCallback(async () => new Promise((resolve) => {
     setTimeout(() => {
@@ -107,29 +101,15 @@ const EateryCardList = () => {
     });
   }, [eateries, getEatery]);
 
-  useEffect(() => {
-    if (eateryCardListRef.current == null) return;
-
-    setCardWidth(eateryCardListRef.current.clientWidth);
-  }, [windowWidth]);
-
   return (
     <div className={classes.list} ref={eateryCardListRef}>
-      {eateries.map((eatery, i) => (
-        <FlippableCard
+      {eateries.map((eatery) => (
+        <EateryCard
           key={eatery.id}
-          front={(
-            <EateryCard
-              id={eatery.id}
-              cardWidth={cardWidth}
-              handleRemove={handleRemove}
-              data={eatery.data}
-            />
-          )}
-          back={(
-            <FlippedCard />
-          )}
-          isFlipped={Number(eatery.id) % 2 === 1}
+          cardId={eatery.id}
+          data={eatery.data}
+          handleRemove={handleRemove}
+          isFlipped={Number(eatery.id) === 2}
         />
       ))}
     </div>

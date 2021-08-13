@@ -1,19 +1,14 @@
-import React, {
-  useCallback,
-  CSSProperties,
-} from 'react';
+import React from 'react';
 import Image from 'next/image';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import Typography from '@material-ui/core/Typography';
 import Skeleton from '@material-ui/lab/Skeleton';
 
-import { CardProps } from '@material-ui/core';
-
-import RemovableCard from '../RemovableCard';
 import { EateryData } from '#/types/Eatery';
 
 const useStyles = makeStyles({
   removableCard: {
+    flexGrow: 1,
     paddingTop: 0,
   },
   imageContainer: {
@@ -34,31 +29,18 @@ const useStyles = makeStyles({
   },
 });
 
-interface EateryCardProps {
-  cardWidth: number;
-  handleRemove: (id: string) => Promise<void>;
-  id: string;
+interface EateryCardFrontProps {
   data?: EateryData;
 }
 
-const EateryCard = ({
-  cardWidth,
-  handleRemove,
-  id,
+const EateryCardFront = ({
   data,
-}: EateryCardProps) => {
+}: EateryCardFrontProps) => {
   const classes = useStyles();
 
-  const swipeCallback = useCallback(() => {
-    handleRemove(id);
-  }, [handleRemove, id]);
-
   return (
-    <RemovableCard
-      disabled={data == null}
+    <div
       className={classes.removableCard}
-      cardWidth={cardWidth}
-      swipeCallback={swipeCallback}
     >
       <div className={classes.imageContainer}>
         {data == null
@@ -76,8 +58,8 @@ const EateryCard = ({
           {data == null ? <Skeleton /> : `${data.distance}m 거리에 있습니다.`}
         </Typography>
       </div>
-    </RemovableCard>
+    </div>
   );
 };
 
-export default EateryCard;
+export default EateryCardFront;

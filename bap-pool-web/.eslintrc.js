@@ -47,6 +47,7 @@ module.exports = {
     ],
     indent: 'off',
     '@typescript-eslint/indent': ['error', 2],
+    '@typescript-eslint/no-empty-function': 'off',
     'modules-newline/import-declaration-newline': 'warn',
     'modules-newline/export-declaration-newline': 'warn',
     'no-use-before-define': 'off',

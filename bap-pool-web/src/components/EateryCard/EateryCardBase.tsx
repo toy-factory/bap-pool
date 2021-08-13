@@ -1,4 +1,7 @@
-import { ReactNode } from 'react';
+import {
+  ReactNode,
+  forwardRef,
+} from 'react';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import Card, { CardProps } from '@material-ui/core/Card';
 
@@ -23,17 +26,19 @@ interface EateryCardBaseProps extends CardProps {
   children: ReactNode;
 }
 
-const EateryCardBase = ({ children, ...props }: EateryCardBaseProps) => {
+// eslint-disable-next-line react/display-name
+const EateryCardBase = forwardRef(({ children, ...props }: EateryCardBaseProps, ref) => {
   const classes = useStyles();
 
   return (
     <Card
+      ref={ref}
       className={[props.className ?? '', classes.card].join(' ')}
       {...props}
     >
       {children}
     </Card>
   );
-};
+});
 
 export default EateryCardBase;
