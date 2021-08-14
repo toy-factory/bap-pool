@@ -6,6 +6,7 @@ import {
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button';
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -13,6 +14,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   header: {
     padding: '0.5rem 1rem',
+    justifyContent: 'space-between',
   },
   menuButton: {
     marginRight: theme.spacing(2),
@@ -38,6 +40,9 @@ const Header = () => {
               뭐먹지? 우유부단한 그대들을 위한 5초
             </Typography>
           </div>
+          <Button variant="contained" color="secondary">
+            <Typography>골라줘!</Typography>
+          </Button>
         </Toolbar>
       </AppBar>
     </div>

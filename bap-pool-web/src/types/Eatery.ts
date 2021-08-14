@@ -4,3 +4,8 @@ export interface EateryData {
   click: number;
   distance: number;
 }
+
+export interface Eatery {
+  id: string;
+  data?: EateryData;
+}

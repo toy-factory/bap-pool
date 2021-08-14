@@ -1,16 +1,14 @@
-import React, {
-  useCallback,
-} from 'react';
-import Image from 'next/image';
+import React from 'react';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import Typography from '@material-ui/core/Typography';
 import Skeleton from '@material-ui/lab/Skeleton';
+import Image from 'next/image';
 
-import RemovableCard from './RemovableCard';
 import { EateryData } from '#/types/Eatery';
 
 const useStyles = makeStyles({
   removableCard: {
+    flexGrow: 1,
     paddingTop: 0,
   },
   imageContainer: {
@@ -19,6 +17,9 @@ const useStyles = makeStyles({
     alignItems: 'center',
     height: '6rem',
     position: 'relative',
+  },
+  image: {
+    backfaceVisibility: 'hidden',
   },
   cardContents: {
     padding: '1.2rem',
@@ -31,36 +32,32 @@ const useStyles = makeStyles({
   },
 });
 
-interface EateryCardProps {
-  cardWidth: number;
-  handleRemove: (id: string) => Promise<void>;
-  id: string;
+interface EateryCardFrontProps {
   data?: EateryData;
 }
 
-const EateryCard = ({
-  cardWidth,
-  handleRemove,
-  id,
+const EateryCardFront = ({
   data,
-}: EateryCardProps) => {
+}: EateryCardFrontProps) => {
   const classes = useStyles();
 
-  const swipeCallback = useCallback(() => {
-    handleRemove(id);
-  }, [handleRemove, id]);
-
   return (
-    <RemovableCard
-      disabled={data == null}
+    <div
       className={classes.removableCard}
-      cardWidth={cardWidth}
-      swipeCallback={swipeCallback}
     >
       <div className={classes.imageContainer}>
         {data == null
           ? <Skeleton variant="rect" width="100%" height="100%" />
-          : <Image src={data.thumbnail} alt="thumbnail" layout="fill" objectFit="contain" draggable={false} />}
+          : (
+            <Image
+              className={classes.image}
+              src={data.thumbnail}
+              alt="thumbnail"
+              layout="fill"
+              objectFit="contain"
+              draggable={false}
+            />
+          )}
       </div>
       <div className={classes.cardContents}>
         <Typography variant="h5" component="h2">
@@ -73,8 +70,8 @@ const EateryCard = ({
           {data == null ? <Skeleton /> : `${data.distance}m 거리에 있습니다.`}
         </Typography>
       </div>
-    </RemovableCard>
+    </div>
   );
 };
 
-export default EateryCard;
+export default EateryCardFront;

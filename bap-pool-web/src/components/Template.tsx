@@ -1,9 +1,11 @@
 import { makeStyles } from '@material-ui/core';
+import { ReactNode } from 'react';
 
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
     justifyContent: 'center',
+    minHeight: '100vh',
   },
   main: {
     flexGrow: 1,
@@ -15,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 interface TemplateProps {
-  children: React.ReactNode;
+  children: ReactNode;
   className?: string;
 }
 
