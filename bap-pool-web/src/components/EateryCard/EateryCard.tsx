@@ -59,16 +59,10 @@ const EateryCard = ({
       disabled={data == null || isFlipped}
     >
       <div className={classes.flipCardInner} style={{ transform: `rotateY(${isFlipped ? '180' : '0'}deg)` }}>
-        <div
-          className={classes.flipCardCommon}
-        >
-          <EateryCardFront
-            data={data}
-          />
+        <div className={classes.flipCardCommon}>
+          <EateryCardFront data={data} />
         </div>
-        <div
-          className={[classes.flipCardCommon, classes.flipCardBack].join(' ')}
-        >
+        <div className={[classes.flipCardCommon, classes.flipCardBack].join(' ')}>
           <EateryCardBack />
         </div>
       </div>
