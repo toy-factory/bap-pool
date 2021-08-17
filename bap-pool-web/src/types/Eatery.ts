@@ -7,5 +7,7 @@ export interface EateryData {
 
 export interface Eatery {
   id: string;
+  order: number;
+  isFlipped: boolean;
   data?: EateryData;
 }

@@ -25,7 +25,11 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-const Header = () => {
+interface HeaderProps {
+  shuffle: () => void;
+}
+
+const Header = ({ shuffle }: HeaderProps) => {
   const classes = useStyles();
 
   return (
@@ -40,7 +44,11 @@ const Header = () => {
               뭐먹지? 우유부단한 그대들을 위한 5초
             </Typography>
           </div>
-          <Button variant="contained" color="secondary">
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={shuffle}
+          >
             <Typography>골라줘!</Typography>
           </Button>
         </Toolbar>

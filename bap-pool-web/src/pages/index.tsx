@@ -28,6 +28,8 @@ const EATERY_LIST: Eatery[] = [
       click: 12,
       distance: 123,
     },
+    isFlipped: false,
+    order: 0,
   },
   {
     id: '2',
@@ -37,6 +39,8 @@ const EATERY_LIST: Eatery[] = [
       click: 12,
       distance: 123,
     },
+    isFlipped: false,
+    order: 1,
   },
   {
     id: '3',
@@ -46,6 +50,8 @@ const EATERY_LIST: Eatery[] = [
       click: 12,
       distance: 123,
     },
+    isFlipped: false,
+    order: 2,
   },
   {
     id: '4',
@@ -55,6 +61,8 @@ const EATERY_LIST: Eatery[] = [
       click: 12,
       distance: 123,
     },
+    isFlipped: false,
+    order: 3,
   },
   {
     id: '5',
@@ -64,6 +72,8 @@ const EATERY_LIST: Eatery[] = [
       click: 12,
       distance: 123,
     },
+    isFlipped: false,
+    order: 4,
   },
 ];
 
@@ -82,7 +92,7 @@ const Home = () => {
     if (indexToRemove === -1) return;
 
     const removedEateries = [...eateries];
-    removedEateries[indexToRemove] = { id: eateries[indexToRemove].id, data: undefined };
+    removedEateries[indexToRemove] = { ...eateries[indexToRemove], data: undefined };
     setEateries(removedEateries);
 
     const newEatery = await getEatery();
@@ -93,9 +103,27 @@ const Home = () => {
     });
   }, [eateries, getEatery]);
 
+  const shuffleEateries = useCallback(() => {
+    const newEateries = [...eateries];
+    const orderArray = Util.shuffleArray(
+      Array(5).fill(0).map((_, index) => index),
+    );
+
+    const tempEateries = newEateries.map((eatery) => ({ ...eatery, order: 0, isFlipped: true }));
+    setEateries(tempEateries);
+
+    setTimeout(() => {
+      const newOrderEateries = tempEateries.map(
+        (eatery, index) => ({ ...eatery, order: orderArray[index] }),
+      );
+
+      setEateries(newOrderEateries);
+    }, 1000);
+  }, [eateries]);
+
   return (
     <Template className={classes.template}>
-      <Header />
+      <Header shuffle={shuffleEateries} />
       <EateryCardList eateries={eateries} handleRemove={handleRemove} />
     </Template>
   );

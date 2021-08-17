@@ -1,5 +1,9 @@
+import {
+  useCallback,
+  DetailedHTMLProps,
+  LiHTMLAttributes,
+} from 'react';
 import { makeStyles } from '@material-ui/core';
-import { useCallback } from 'react';
 
 import EateryCardFront from './EateryCardFront';
 import EateryCardBack from './EateryCardBack';
@@ -7,6 +11,9 @@ import { EateryData } from '#/types/Eatery';
 import RemovableCard from './RemovableCard';
 
 const useStyles = makeStyles({
+  eateryCard: {
+    listStyle: 'none',
+  },
   flipCard: {
     width: '100%',
     height: '200px',
@@ -33,18 +40,21 @@ const useStyles = makeStyles({
   },
 });
 
-interface EateryCardProps {
+interface EateryCardProps
+  extends DetailedHTMLProps<LiHTMLAttributes<HTMLLIElement>, HTMLLIElement> {
   cardId: string;
   handleRemove: (id: string) => Promise<void>;
-  isFlipped: boolean;
+  isFlipped?: boolean;
   data?: EateryData;
 }
 
+// eslint-disable-next-line react/display-name
 const EateryCard = ({
   cardId,
   data,
-  isFlipped,
+  isFlipped = false,
   handleRemove,
+  ...props
 }: EateryCardProps) => {
   const classes = useStyles();
 
@@ -53,20 +63,23 @@ const EateryCard = ({
   }, [handleRemove, cardId]);
 
   return (
-    <RemovableCard
-      className={classes.flipCard}
-      swipeCallback={swipeCallback}
-      disabled={data == null || isFlipped}
-    >
-      <div className={classes.flipCardInner} style={{ transform: `rotateY(${isFlipped ? '180' : '0'}deg)` }}>
-        <div className={classes.flipCardCommon}>
-          <EateryCardFront data={data} />
+    // eslint-disable-next-line react/jsx-props-no-spreading
+    <li {...props} className={classes.eateryCard}>
+      <RemovableCard
+        className={classes.flipCard}
+        swipeCallback={swipeCallback}
+        disabled={data == null || isFlipped}
+      >
+        <div className={classes.flipCardInner} style={{ transform: `rotateY(${isFlipped ? '180' : '0'}deg)` }}>
+          <div className={classes.flipCardCommon}>
+            <EateryCardFront data={data} />
+          </div>
+          <div className={[classes.flipCardCommon, classes.flipCardBack].join(' ')}>
+            <EateryCardBack />
+          </div>
         </div>
-        <div className={[classes.flipCardCommon, classes.flipCardBack].join(' ')}>
-          <EateryCardBack />
-        </div>
-      </div>
-    </RemovableCard>
+      </RemovableCard>
+    </li>
   );
 };
 
