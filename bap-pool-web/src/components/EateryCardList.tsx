@@ -10,10 +10,16 @@ import { Eatery } from '#/types/Eatery';
 
 const useStyles = makeStyles({
   list: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '0.5rem',
-    margin: '1rem 0',
+    position: 'relative',
+    perspective: 1000,
+    transformStyle: 'preserve-3d',
+    '& > li': {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      transition: 'transform 0.5s ease',
+      width: '100%',
+    },
   },
 });
 
@@ -21,23 +27,28 @@ interface EateryCardListProps {
   eateries : Eatery[];
   handleRemove: (id: string) => Promise<void>;
 }
+
+const GAP_HEIGHT_PERCENT = 5;
+const HEIGHT_PER_CARD_PERCENT = 100;
+
 const EateryCardList = ({ eateries, handleRemove } : EateryCardListProps) => {
   const classes = useStyles();
 
-  const eateryCardListRef = useRef<HTMLDivElement>(null);
+  const eateryCardListRef = useRef<HTMLUListElement>(null);
 
   return (
-    <div className={classes.list} ref={eateryCardListRef}>
+    <ul className={classes.list} ref={eateryCardListRef}>
       {eateries.map((eatery) => (
         <EateryCard
+          style={{ transform: `translateY(${eatery.order * (HEIGHT_PER_CARD_PERCENT + GAP_HEIGHT_PERCENT)}%)` }}
           key={eatery.id}
           cardId={eatery.id}
           data={eatery.data}
           handleRemove={handleRemove}
-          isFlipped={false}
+          isFlipped={eatery.isFlipped}
         />
       ))}
-    </div>
+    </ul>
   );
 };
 
