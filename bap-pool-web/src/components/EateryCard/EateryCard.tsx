@@ -2,6 +2,8 @@ import {
   useCallback,
   DetailedHTMLProps,
   LiHTMLAttributes,
+  useRef,
+  useEffect,
 } from 'react';
 import { makeStyles } from '@material-ui/core';
 
@@ -9,6 +11,8 @@ import EateryCardFront from './EateryCardFront';
 import EateryCardBack from './EateryCardBack';
 import { EateryData } from '#/types/Eatery';
 import RemovableCard from './RemovableCard';
+
+import usePrevious from '#/hooks/usePrevious';
 
 const useStyles = makeStyles({
   eateryCard: {
@@ -48,7 +52,6 @@ interface EateryCardProps
   data?: EateryData;
 }
 
-// eslint-disable-next-line react/display-name
 const EateryCard = ({
   cardId,
   data,
@@ -58,13 +61,23 @@ const EateryCard = ({
 }: EateryCardProps) => {
   const classes = useStyles();
 
+  const cardRef = useRef<HTMLLIElement | null>(null);
+  const previousIsFlipped = usePrevious(isFlipped);
+
   const swipeCallback = useCallback(async () => {
     await handleRemove(cardId);
   }, [handleRemove, cardId]);
 
+  useEffect(() => {
+    if (cardRef.current == null) return;
+    if (previousIsFlipped && !isFlipped) {
+      cardRef.current.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }
+  }, [isFlipped, previousIsFlipped]);
+
   return (
     // eslint-disable-next-line react/jsx-props-no-spreading
-    <li {...props} className={classes.eateryCard}>
+    <li {...props} className={classes.eateryCard} ref={cardRef}>
       <RemovableCard
         className={classes.flipCard}
         swipeCallback={swipeCallback}
