@@ -77,9 +77,13 @@ const EATERY_LIST: Eatery[] = [
   },
 ];
 
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+const SLEEP_TERMS_IN_MS = 700;
+
 const Home = () => {
   const classes = useStyles();
   const [eateries, setEateries] = useState<Eatery[]>(() => EATERY_LIST);
+  const [isPicking, setIsPicking] = useState(false);
 
   const getEatery = useCallback(async () => new Promise((resolve) => {
     setTimeout(() => {
@@ -103,27 +107,40 @@ const Home = () => {
     });
   }, [eateries, getEatery]);
 
-  const shuffleEateries = useCallback(() => {
-    const newEateries = [...eateries];
-    const orderArray = Util.shuffleArray(
-      Array(5).fill(0).map((_, index) => index),
-    );
+  const pickRandomEatery = useCallback(async () => {
+    if (isPicking) return;
+    setIsPicking(true);
 
-    const tempEateries = newEateries.map((eatery) => ({ ...eatery, order: 0, isFlipped: true }));
-    setEateries(tempEateries);
+    try {
+      const newEateries = [...eateries];
+      const orderZeroEateries = newEateries.map(
+        (eatery) => ({ ...eatery, order: 0, isFlipped: true }),
+      );
+      setEateries(orderZeroEateries);
+      await sleep(SLEEP_TERMS_IN_MS);
 
-    setTimeout(() => {
-      const newOrderEateries = tempEateries.map(
+      const orderArray = Util.shuffleArray(Array(5).fill(0).map((_, index) => index));
+      const newOrderEateries = orderZeroEateries.map(
         (eatery, index) => ({ ...eatery, order: orderArray[index] }),
       );
-
       setEateries(newOrderEateries);
-    }, 1000);
-  }, [eateries]);
+      await sleep(SLEEP_TERMS_IN_MS);
+
+      const [randomIndex] = Util.shuffleArray(orderArray);
+      const oneFlippedEateries = [...newOrderEateries];
+      oneFlippedEateries[randomIndex] = { ...oneFlippedEateries[randomIndex], isFlipped: false };
+      setEateries(oneFlippedEateries);
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error(err);
+    } finally {
+      setIsPicking(false);
+    }
+  }, [eateries, isPicking]);
 
   return (
     <Template className={classes.template}>
-      <Header shuffle={shuffleEateries} />
+      <Header pickRandomEatery={pickRandomEatery} />
       <EateryCardList eateries={eateries} handleRemove={handleRemove} />
     </Template>
   );

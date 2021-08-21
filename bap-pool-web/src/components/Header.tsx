@@ -26,10 +26,10 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 interface HeaderProps {
-  shuffle: () => void;
+  pickRandomEatery: () => Promise<void>;
 }
 
-const Header = ({ shuffle }: HeaderProps) => {
+const Header = ({ pickRandomEatery }: HeaderProps) => {
   const classes = useStyles();
 
   return (
@@ -47,7 +47,7 @@ const Header = ({ shuffle }: HeaderProps) => {
           <Button
             variant="contained"
             color="secondary"
-            onClick={shuffle}
+            onClick={pickRandomEatery}
           >
             <Typography>골라줘!</Typography>
           </Button>
