@@ -41,7 +41,7 @@ const Header = ({ pickRandomEatery }: HeaderProps) => {
               밥풀
             </Typography>
             <Typography variant="caption">
-              뭐먹지? 우유부단한 그대들을 위한 5초
+              &quot;뭐 먹지?&quot; 결정장애 당신을 위한 5초, 밥풀
             </Typography>
           </div>
           <Button
