@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { EateryData } from './types/Eatery';
+import { EateryData } from '#/types/Eatery';
 
 const ApiRequest = (() => {
   const apiClient = axios.create({
@@ -16,7 +16,12 @@ const ApiRequest = (() => {
           params: { lat, lng },
         },
       );
-      console.log(response.data);
+      return response.data;
+    },
+    async putEateryClickCount(id: string): Promise<void> {
+      const response = await apiClient.put(
+        `/eateries/click/${id}`,
+      );
       return response.data;
     },
   };

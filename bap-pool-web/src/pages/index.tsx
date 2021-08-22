@@ -98,6 +98,12 @@ const Home = () => {
 
     const replaceEateryCard = () => {
       const newUnshowedEateryIndex = eateriesPool.findIndex((eatery) => !eatery.showed);
+      if (newUnshowedEateryIndex === -1) {
+        // eslint-disable-next-line no-alert
+        alert('더 불러올 수 있는 가게가 없어요!');
+        return;
+      }
+
       setEateriesPool((prevEateriesPool) => {
         const replacedEateryIndex = prevEateriesPool.findIndex((eatery) => eatery.data?.id === id);
         const newEateriesPool = [...prevEateriesPool];

@@ -6,6 +6,8 @@ import Button from '@material-ui/core/Button';
 import Image from 'next/image';
 
 import { EateryData } from '#/types/Eatery';
+import ApiRequest from '#/ApiRequest';
+import Colors from '#/styles/Colors';
 
 const useStyles = makeStyles({
   eateryCardFront: {
@@ -16,10 +18,11 @@ const useStyles = makeStyles({
   imageContainer: {
     display: 'flex',
     position: 'relative',
+    borderRadius: 8,
+    boxShadow: `1px 1px 1px 1px ${Colors.gray}`,
   },
   image: {
     backfaceVisibility: 'hidden',
-    borderRadius: 8,
   },
   cardContents: {
     padding: '1.2rem',
@@ -40,19 +43,21 @@ const useStyles = makeStyles({
 });
 
 interface EateryCardFrontProps {
+  id: string;
   isLoading: boolean;
   data: EateryData;
   currentWidth: number;
 }
 
 const EateryCardFront = ({
+  id,
   isLoading,
   data,
   currentWidth,
 }: EateryCardFrontProps) => {
   const classes = useStyles();
 
-  const handleButtonClick = useCallback((e) => {
+  const handleButtonClick = useCallback(async (e) => {
     e.preventDefault();
 
     if (data.url == null) {
@@ -62,7 +67,8 @@ const EateryCardFront = ({
     }
 
     window.open(data.url);
-  }, [data.url]);
+    await ApiRequest.putEateryClickCount(id);
+  }, [data.url, id]);
 
   return (
     <div
@@ -71,8 +77,7 @@ const EateryCardFront = ({
       <div
         className={classes.imageContainer}
         style={{
-          minWidth: currentWidth / 3,
-          minHeight: '100%',
+          width: currentWidth / 3,
         }}
       >
         {isLoading
@@ -83,7 +88,7 @@ const EateryCardFront = ({
               src={data.thumbnailUrl ?? '/bapoori.png'}
               alt="thumbnail"
               layout="fill"
-              objectFit="fill"
+              objectFit="contain"
               draggable={false}
             />
           )}
@@ -97,12 +102,26 @@ const EateryCardFront = ({
             {isLoading ? <Skeleton /> : `다른 바푸리가 ${data.click}번 클릭했어요.`}
           </Typography>
           <Typography variant="body2" component="p">
-            {isLoading ? <Skeleton /> : `${data.distance}m 거리에 있습니다.`}
+            {isLoading ? <Skeleton /> : `여기서부터 ${data.distance}m 만큼 떨어져 있어요.`}
           </Typography>
         </div>
-        <Button className={classes.button} fullWidth variant="contained" onClick={handleButtonClick} color="primary">
-          <Typography variant="button">지도에서 보기</Typography>
-        </Button>
+        <div>
+          <Button
+            className={classes.button}
+            fullWidth
+            variant="contained"
+            onClick={handleButtonClick}
+            color="primary"
+            disabled={isLoading}
+          >
+            {
+              isLoading
+                ? <Skeleton variant="rect" />
+                : <Typography variant="button">지도에서 보기</Typography>
+            }
+          </Button>
+
+        </div>
       </div>
     </div>
   );

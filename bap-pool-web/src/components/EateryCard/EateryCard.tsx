@@ -48,14 +48,14 @@ interface EateryCardProps
   extends DetailedHTMLProps<LiHTMLAttributes<HTMLLIElement>, HTMLLIElement> {
   handleRemove: (id: string) => Promise<void>;
   isLoading: boolean;
-  cardId: string;
+  id: string;
   data: EateryData;
   currentWidth: number;
   isFlipped?: boolean;
 }
 
 const EateryCard = ({
-  cardId,
+  id,
   isLoading,
   data,
   isFlipped = false,
@@ -68,8 +68,8 @@ const EateryCard = ({
   const previousIsFlipped = usePrevious(isFlipped);
 
   const swipeCallback = useCallback(async () => {
-    await handleRemove(cardId);
-  }, [handleRemove, cardId]);
+    await handleRemove(id);
+  }, [handleRemove, id]);
 
   useEffect(() => {
     if (cardRef.current == null) return;
@@ -88,7 +88,12 @@ const EateryCard = ({
       >
         <div className={classes.flipCardInner} style={{ transform: `rotateY(${isFlipped ? '180' : '0'}deg)` }}>
           <div className={classes.flipCardCommon}>
-            <EateryCardFront isLoading={isLoading} data={data} currentWidth={currentWidth} />
+            <EateryCardFront
+              isLoading={isLoading}
+              data={data}
+              currentWidth={currentWidth}
+              id={id}
+            />
           </div>
           <div className={[classes.flipCardCommon, classes.flipCardBack].join(' ')}>
             <EateryCardBack />
