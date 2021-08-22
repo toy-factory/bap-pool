@@ -1,11 +1,11 @@
 package com.toyfactory.bappool.dto;
 
+import javax.validation.constraints.NotNull;
+
 import com.toyfactory.bappool.domain.Eatery;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
-import javax.validation.constraints.NotNull;
 
 @AllArgsConstructor
 @Getter
