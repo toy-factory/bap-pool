@@ -2,11 +2,15 @@ plugins {
 	id 'org.springframework.boot' version '2.4.8'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'java'
+	id 'checkstyle'
 }
 
 group = 'com.toyfactory.bappool'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
+
+compileJava.options.encoding = 'UTF-8'
+compileTestJava.options.encoding = 'UTF-8'
 
 configurations {
 	compileOnly {
@@ -44,4 +48,10 @@ sourceSets {
 			srcDirs "src/main/resources", "src/main/resources-${profile}"
 		}
 	}
+}
+
+checkstyle {
+//	maxWarnings = 0
+	configFile = file("${rootDir}/naver-checkstyle-rules.xml")
+	toolVersion = '8.27'
 }
