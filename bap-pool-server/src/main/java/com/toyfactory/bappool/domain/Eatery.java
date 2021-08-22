@@ -13,23 +13,23 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @Entity
 public class Eatery {
-    @Id
-    private String id;
+	@Id
+	private String id;
 
-    @NotNull
-    private int click;
+	@NotNull
+	private int click;
 
-    private String url;
+	private String url;
 
-    @Lob
-    private String photoReference;
+	@Lob
+	private String photoReference;
 
-    @Builder
-    public Eatery(String id, int click, String url, String photoReference) {
-        this.id = id;
-        this.click = click;
-        this.url = url;
-        this.photoReference = photoReference;
-    }
+	@Builder
+	public Eatery(String id, int click, String url, String photoReference) {
+		this.id = id;
+		this.click = click;
+		this.url = url;
+		this.photoReference = photoReference;
+	}
 
 }
