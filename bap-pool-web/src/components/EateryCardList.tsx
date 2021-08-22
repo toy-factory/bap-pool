@@ -1,6 +1,5 @@
 import {
   useRef,
-  useMemo,
   useState,
   useEffect,
 } from 'react';
@@ -52,7 +51,7 @@ const EateryCardList = ({ eateries, handleRemove } : EateryCardListProps) => {
         <EateryCard
           style={{ transform: `translateY(${eatery.order * (HEIGHT_PER_CARD_PERCENT + GAP_HEIGHT_PERCENT)}%)` }}
           key={eatery.id}
-          cardId={eatery.id}
+          id={eatery.id}
           data={eatery.data}
           isLoading={eatery.isLoading}
           handleRemove={handleRemove}
