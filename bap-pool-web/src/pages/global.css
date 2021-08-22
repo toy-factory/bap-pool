@@ -1,0 +1,25 @@
+@font-face {
+  font-family: "GmarketSansMedium";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+
+html,
+body,
+#__next {
+  min-height: 100vh;
+  scroll-behavior: smooth;
+}
+
+html {
+  font-size: 62.5%;
+}
+
+@media only screen and (max-width: 481px) {
+  html {
+    font-size: 8px;
+  }
+}
+
+  

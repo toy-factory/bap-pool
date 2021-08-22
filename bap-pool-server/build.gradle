@@ -2,11 +2,15 @@ plugins {
 	id 'org.springframework.boot' version '2.4.8'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'java'
+	id 'checkstyle'
 }
 
 group = 'com.toyfactory.bappool'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
+
+compileJava.options.encoding = 'UTF-8'
+compileTestJava.options.encoding = 'UTF-8'
 
 configurations {
 	compileOnly {
@@ -21,6 +25,10 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.apache.httpcomponents:httpclient'
+	implementation 'org.mariadb.jdbc:mariadb-java-client'
+
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'com.h2database:h2'
@@ -30,4 +38,19 @@ dependencies {
 
 test {
 	useJUnitPlatform()
+}
+
+ext.profile = (!project.hasProperty('profile') || !profile) ? 'dev' : profile
+
+sourceSets {
+	main {
+		resources {
+			srcDirs "src/main/resources", "src/main/resources-${profile}"
+		}
+	}
+}
+
+checkstyle {
+	configFile = file("${rootDir}/naver-checkstyle-rules.xml")
+	toolVersion = '8.27'
 }
