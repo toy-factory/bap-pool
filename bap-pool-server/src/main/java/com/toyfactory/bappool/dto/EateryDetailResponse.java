@@ -15,7 +15,7 @@ public class EateryDetailResponse {
 		this.id = eatery.getId();
 		this.click = eatery.getClick();
 		this.url = eatery.getUrl();
-		this.thumbnailUrl = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=500&photoreference="
+		this.thumbnailUrl = "https://maps.googleapis.com/maps/api/place/photo?maxwidth=150&photoreference="
 						+ eatery.getPhotoReference()
 						+ "&key="
 						+ apiKey;
