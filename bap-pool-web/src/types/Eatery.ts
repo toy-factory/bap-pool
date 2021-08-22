@@ -1,13 +1,17 @@
 export interface EateryData {
-  thumbnail: string;
+  id: string;
   placeName: string;
-  click: number;
+  thumbnailUrl: string | null;
   distance: number;
+  click: number;
+  types: string[];
+  url: string | null;
 }
 
 export interface Eatery {
   id: string;
   order: number;
+  isLoading: boolean;
   isFlipped: boolean;
-  data?: EateryData;
+  data: EateryData;
 }

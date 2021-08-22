@@ -1,8 +1,8 @@
 import { makeStyles } from '@material-ui/core';
-
 import {
   useCallback,
   useState,
+  useEffect,
 } from 'react';
 
 import Header from '#/components/Header';
@@ -10,8 +10,11 @@ import EateryCardList from '#/components/EateryCardList';
 import Template from '#/components/Template';
 import {
   Eatery,
+  EateryData,
 } from '#/types/Eatery';
 import Util from '#/Util';
+import useGeolocation from '#/hooks/useGeolocation';
+import ApiRequest from '#/ApiRequest';
 
 const useStyles = makeStyles({
   template: {
@@ -19,93 +22,110 @@ const useStyles = makeStyles({
   },
 });
 
-const EATERY_LIST: Eatery[] = [
-  {
-    id: '1',
-    data: {
-      thumbnail: '/bapoori.png',
-      placeName: '원래는',
-      click: 12,
-      distance: 123,
-    },
-    isFlipped: false,
-    order: 0,
-  },
-  {
-    id: '2',
-    data: {
-      thumbnail: '/bapoori.png',
-      placeName: '원래는 삼겹살',
-      click: 12,
-      distance: 123,
-    },
-    isFlipped: false,
-    order: 1,
-  },
-  {
-    id: '3',
-    data: {
-      thumbnail: '/bapoori.png',
-      placeName: '원래는 삼겹살 집을',
-      click: 12,
-      distance: 123,
-    },
-    isFlipped: false,
-    order: 2,
-  },
-  {
-    id: '4',
-    data: {
-      thumbnail: '/bapoori.png',
-      placeName: '원래는 삼겹살 집을 하려고',
-      click: 12,
-      distance: 123,
-    },
-    isFlipped: false,
-    order: 3,
-  },
-  {
-    id: '5',
-    data: {
-      thumbnail: '/bapoori.png',
-      placeName: '원래는 삼겹살 집을 하려고 했었다',
-      click: 12,
-      distance: 123,
-    },
-    isFlipped: false,
-    order: 4,
-  },
-];
-
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 const SLEEP_TERMS_IN_MS = 700;
 
+interface EntireEateries {
+  data: EateryData;
+  showing: boolean;
+  showed: boolean;
+}
+
 const Home = () => {
   const classes = useStyles();
-  const [eateries, setEateries] = useState<Eatery[]>(() => EATERY_LIST);
+  const geolocation = useGeolocation();
+
+  const [eateriesPool, setEateriesPool] = useState<EntireEateries[]>([]);
+  const [eateries, setEateries] = useState<Eatery[]>([]);
   const [isPicking, setIsPicking] = useState(false);
 
-  const getEatery = useCallback(async () => new Promise((resolve) => {
-    setTimeout(() => {
-      resolve({ id: Util.getRandomId(), data: EATERY_LIST[0].data });
-    }, 1000);
-  }), []);
+  useEffect(() => {
+    const fetchEateries = async ({ lat, lng }: {lat: number, lng: number}) => {
+      let eateriesData: EateryData[] = [];
+      try {
+        eateriesData = await ApiRequest.getEateries({
+          lat,
+          lng,
+        });
+      } catch (err) {
+        // eslint-disable-next-line no-alert
+        alert('현재 서버와 연결이 올바르지 않습니다. 다음에 다시 접속해주세요.');
+        return;
+      }
+
+      const entireEateriesData = eateriesData.map(
+        (eatery, index) => ({
+          data: { ...eatery, distance: Math.floor(eatery.distance) },
+          showing: index < 5,
+          showed: index < 5,
+        }),
+      );
+
+      setEateriesPool(entireEateriesData);
+      setEateries(
+        entireEateriesData
+          .filter(
+            (entireEateryData) => entireEateryData.showing,
+          ).map((eatery, index) => ({
+            id: eatery.data.id,
+            isFlipped: false,
+            isLoading: false,
+            order: index,
+            data: eatery.data,
+          })),
+      );
+    };
+
+    if (geolocation == null) return;
+
+    fetchEateries({ lat: geolocation.coords.latitude, lng: geolocation.coords.longitude });
+  }, [geolocation]);
 
   const handleRemove = useCallback(async (id: string) => {
-    const indexToRemove = eateries.findIndex((eatery) => eatery.id === id);
-    if (indexToRemove === -1) return;
+    const orderForRemovedCard = eateries.find((eatery) => eatery.data?.id === id)?.order ?? 0;
+    const eateriesIndexForRemovedCard = eateries.findIndex((eatery) => eatery.data?.id === id);
 
-    const removedEateries = [...eateries];
-    removedEateries[indexToRemove] = { ...eateries[indexToRemove], data: undefined };
-    setEateries(removedEateries);
+    const makeEmptyCard = () => {
+      setEateries((prevEateries) => {
+        const removedEateries = [...prevEateries];
+        removedEateries[eateriesIndexForRemovedCard] = {
+          ...removedEateries[eateriesIndexForRemovedCard],
+          isLoading: true,
+        };
+        return removedEateries;
+      });
+    };
 
-    const newEatery = await getEatery();
-    setEateries((prevEateries) => {
-      const newEateries = [...prevEateries];
-      newEateries[indexToRemove] = newEatery as Eatery;
-      return newEateries;
-    });
-  }, [eateries, getEatery]);
+    const replaceEateryCard = () => {
+      const newUnshowedEateryIndex = eateriesPool.findIndex((eatery) => !eatery.showed);
+      setEateriesPool((prevEateriesPool) => {
+        const replacedEateryIndex = prevEateriesPool.findIndex((eatery) => eatery.data?.id === id);
+        const newEateriesPool = [...prevEateriesPool];
+        newEateriesPool[replacedEateryIndex].showing = false;
+
+        const newEateryIndexToShow = prevEateriesPool.findIndex((eatery) => !eatery.showed);
+        newEateriesPool[newEateryIndexToShow].showed = true;
+        newEateriesPool[newEateryIndexToShow].showing = true;
+        return newEateriesPool;
+      });
+      setEateries((prevEateries) => {
+        const newEateries = [...prevEateries];
+
+        newEateries[eateriesIndexForRemovedCard] = {
+          id: eateriesPool[newUnshowedEateryIndex].data.id,
+          data: eateriesPool[newUnshowedEateryIndex].data,
+          isFlipped: false,
+          isLoading: false,
+          order: orderForRemovedCard,
+        };
+        return newEateries;
+      });
+    };
+
+    makeEmptyCard();
+    await sleep(1000);
+    replaceEateryCard();
+  }, [eateries, eateriesPool]);
 
   const pickRandomEatery = useCallback(async () => {
     if (isPicking) return;
@@ -119,7 +139,7 @@ const Home = () => {
       setEateries(orderZeroEateries);
       await sleep(SLEEP_TERMS_IN_MS);
 
-      const orderArray = Util.shuffleArray(Array(5).fill(0).map((_, index) => index));
+      const orderArray = Util.shuffleArray(Array(eateries.length).fill(0).map((_, index) => index));
       const newOrderEateries = orderZeroEateries.map(
         (eatery, index) => ({ ...eatery, order: orderArray[index] }),
       );
