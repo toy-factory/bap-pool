@@ -46,21 +46,24 @@ const useStyles = makeStyles({
 
 interface EateryCardProps
   extends DetailedHTMLProps<LiHTMLAttributes<HTMLLIElement>, HTMLLIElement> {
-  cardId: string;
   handleRemove: (id: string) => Promise<void>;
+  isLoading: boolean;
+  cardId: string;
+  data: EateryData;
+  currentWidth: number;
   isFlipped?: boolean;
-  data?: EateryData;
 }
 
 const EateryCard = ({
   cardId,
+  isLoading,
   data,
   isFlipped = false,
   handleRemove,
+  currentWidth,
   ...props
 }: EateryCardProps) => {
   const classes = useStyles();
-
   const cardRef = useRef<HTMLLIElement | null>(null);
   const previousIsFlipped = usePrevious(isFlipped);
 
@@ -71,7 +74,7 @@ const EateryCard = ({
   useEffect(() => {
     if (cardRef.current == null) return;
     if (previousIsFlipped && !isFlipped) {
-      cardRef.current.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      cardRef.current.scrollIntoView({ block: 'center', behavior: 'smooth' });
     }
   }, [isFlipped, previousIsFlipped]);
 
@@ -81,11 +84,11 @@ const EateryCard = ({
       <RemovableCard
         className={classes.flipCard}
         swipeCallback={swipeCallback}
-        disabled={data == null || isFlipped}
+        disabled={isLoading || isFlipped}
       >
         <div className={classes.flipCardInner} style={{ transform: `rotateY(${isFlipped ? '180' : '0'}deg)` }}>
           <div className={classes.flipCardCommon}>
-            <EateryCardFront data={data} />
+            <EateryCardFront isLoading={isLoading} data={data} currentWidth={currentWidth} />
           </div>
           <div className={[classes.flipCardCommon, classes.flipCardBack].join(' ')}>
             <EateryCardBack />

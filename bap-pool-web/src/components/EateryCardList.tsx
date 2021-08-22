@@ -1,5 +1,8 @@
 import {
   useRef,
+  useMemo,
+  useState,
+  useEffect,
 } from 'react';
 import {
   makeStyles,
@@ -7,6 +10,7 @@ import {
 
 import EateryCard from './EateryCard/EateryCard';
 import { Eatery } from '#/types/Eatery';
+import useWindowSize from '#/hooks/useWindowSize';
 
 const useStyles = makeStyles({
   list: {
@@ -33,19 +37,27 @@ const HEIGHT_PER_CARD_PERCENT = 100;
 
 const EateryCardList = ({ eateries, handleRemove } : EateryCardListProps) => {
   const classes = useStyles();
+  const { width } = useWindowSize();
+  const [cardWidth, setCardWidth] = useState(360);
 
-  const eateryCardListRef = useRef<HTMLUListElement>(null);
+  const cardListRef = useRef<HTMLUListElement>(null);
+
+  useEffect(() => {
+    setCardWidth(cardListRef.current?.clientWidth ?? 360);
+  }, [width]);
 
   return (
-    <ul className={classes.list} ref={eateryCardListRef}>
+    <ul className={classes.list} ref={cardListRef}>
       {eateries.map((eatery) => (
         <EateryCard
           style={{ transform: `translateY(${eatery.order * (HEIGHT_PER_CARD_PERCENT + GAP_HEIGHT_PERCENT)}%)` }}
           key={eatery.id}
           cardId={eatery.id}
           data={eatery.data}
+          isLoading={eatery.isLoading}
           handleRemove={handleRemove}
           isFlipped={eatery.isFlipped}
+          currentWidth={cardWidth}
         />
       ))}
     </ul>

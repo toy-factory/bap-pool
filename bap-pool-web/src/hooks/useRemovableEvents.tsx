@@ -11,7 +11,10 @@ interface useRemovableEventsProps {
   onRemove: () => Promise<void> | void;
 }
 
-const useRemovableEvents = ({ threshold, onRemove }: useRemovableEventsProps) => {
+const useRemovableEvents = ({
+  threshold,
+  onRemove,
+}: useRemovableEventsProps) => {
   const [deltaX, setDeltaX] = useState(0);
   const [startX, setStartX] = useState(0);
 
@@ -27,6 +30,7 @@ const useRemovableEvents = ({ threshold, onRemove }: useRemovableEventsProps) =>
     if (Math.abs(deltaX) > Math.round(threshold)) {
       onRemove();
     }
+
     setStartX(0);
     setDeltaX(0);
   }, [deltaX, threshold, onRemove]);

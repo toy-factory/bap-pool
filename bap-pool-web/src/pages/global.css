@@ -5,13 +5,21 @@
   font-style: normal;
 }
 
-html {
-  font-size: 62.5%;
-}
-
 html,
 body,
 #__next {
   min-height: 100vh;
   scroll-behavior: smooth;
 }
+
+html {
+  font-size: 62.5%;
+}
+
+@media only screen and (max-width: 481px) {
+  html {
+    font-size: 8px;
+  }
+}
+
+  

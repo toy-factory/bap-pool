@@ -27,6 +27,7 @@ module.exports = {
     'plugin:import/errors',
     'plugin:import/warnings',
     'plugin:import/typescript',
+    'plugin:@next/next/recommended',
   ],
   rules: {
     '@typescript-eslint/explicit-module-boundary-types': 0,
@@ -59,6 +60,7 @@ module.exports = {
         groups: [['builtin', 'external'], 'internal'],
       },
     ],
+    '@typescript-eslint/no-var-requires': 'off',
   },
   settings: {
     'import/resolver': {
