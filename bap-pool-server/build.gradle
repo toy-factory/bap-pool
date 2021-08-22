@@ -51,7 +51,6 @@ sourceSets {
 }
 
 checkstyle {
-//	maxWarnings = 0
 	configFile = file("${rootDir}/naver-checkstyle-rules.xml")
 	toolVersion = '8.27'
 }
