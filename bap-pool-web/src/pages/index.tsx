@@ -96,7 +96,7 @@ const Home = () => {
       });
     };
 
-    const replaceEateryCard = () => {
+    const updateReplacedEateryCard = async () => {
       const newUnshowedEateryIndex = eateriesPool.findIndex((eatery) => !eatery.showed);
       if (newUnshowedEateryIndex === -1) {
         // eslint-disable-next-line no-alert
@@ -104,14 +104,17 @@ const Home = () => {
         return;
       }
 
+      const newEateryDetailData = (
+        await ApiRequest.getEatery(eateriesPool[newUnshowedEateryIndex].data.id)
+      );
+
       setEateriesPool((prevEateriesPool) => {
         const replacedEateryIndex = prevEateriesPool.findIndex((eatery) => eatery.data?.id === id);
         const newEateriesPool = [...prevEateriesPool];
         newEateriesPool[replacedEateryIndex].showing = false;
 
-        const newEateryIndexToShow = prevEateriesPool.findIndex((eatery) => !eatery.showed);
-        newEateriesPool[newEateryIndexToShow].showed = true;
-        newEateriesPool[newEateryIndexToShow].showing = true;
+        newEateriesPool[newUnshowedEateryIndex].showed = true;
+        newEateriesPool[newUnshowedEateryIndex].showing = true;
         return newEateriesPool;
       });
       setEateries((prevEateries) => {
@@ -119,7 +122,12 @@ const Home = () => {
 
         newEateries[eateriesIndexForRemovedCard] = {
           id: eateriesPool[newUnshowedEateryIndex].data.id,
-          data: eateriesPool[newUnshowedEateryIndex].data,
+          data: {
+            ...eateriesPool[newUnshowedEateryIndex].data,
+            click: newEateryDetailData.click,
+            url: newEateryDetailData.url,
+            thumbnailUrl: newEateryDetailData.thumbnailUrl,
+          },
           isFlipped: false,
           isLoading: false,
           order: orderForRemovedCard,
@@ -130,7 +138,7 @@ const Home = () => {
 
     makeEmptyCard();
     await sleep(1000);
-    replaceEateryCard();
+    await updateReplacedEateryCard();
   }, [eateries, eateriesPool]);
 
   const pickRandomEatery = useCallback(async () => {
