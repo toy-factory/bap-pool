@@ -4,10 +4,10 @@ import Typography from '@material-ui/core/Typography';
 import Skeleton from '@material-ui/lab/Skeleton';
 import Button from '@material-ui/core/Button';
 import Image from 'next/image';
+import Divider from '@material-ui/core/Divider';
 
-import { EateryData } from '#/types/Eatery';
 import ApiRequest from '#/ApiRequest';
-import Colors from '#/styles/Colors';
+import { EateryData } from '#/types/Eatery';
 
 const useStyles = makeStyles({
   eateryCardFront: {
@@ -19,7 +19,6 @@ const useStyles = makeStyles({
     display: 'flex',
     position: 'relative',
     borderRadius: 8,
-    boxShadow: `1px 1px 1px 1px ${Colors.gray}`,
   },
   image: {
     backfaceVisibility: 'hidden',
@@ -90,9 +89,14 @@ const EateryCardFront = ({
               layout="fill"
               objectFit="contain"
               draggable={false}
+
             />
           )}
       </div>
+      <Divider
+        orientation="vertical"
+        flexItem
+      />
       <div className={classes.cardContents}>
         <div>
           <Typography variant="h5" component="h2">

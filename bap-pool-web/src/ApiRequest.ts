@@ -4,8 +4,8 @@ import { EateryData } from '#/types/Eatery';
 
 const ApiRequest = (() => {
   const apiClient = axios.create({
-    baseURL: 'http://13.125.213.210:8080/api',
-    timeout: 1000,
+    baseURL: 'https://bappool.tk/api',
+    timeout: 3000,
   });
 
   return {
@@ -15,6 +15,12 @@ const ApiRequest = (() => {
         {
           params: { lat, lng },
         },
+      );
+      return response.data;
+    },
+    async getEatery(id: string): Promise<Pick<EateryData, 'id' | 'click' | 'url' | 'thumbnailUrl'>> {
+      const response = await apiClient.get(
+        `/eateries/${id}`,
       );
       return response.data;
     },
