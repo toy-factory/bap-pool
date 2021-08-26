@@ -29,6 +29,10 @@ dependencies {
 	implementation 'org.apache.httpcomponents:httpclient'
 	implementation 'org.mariadb.jdbc:mariadb-java-client'
 
+	// AWS SDK
+	implementation platform('com.amazonaws:aws-java-sdk-bom:1.11.1000')
+	implementation 'com.amazonaws:aws-java-sdk-s3'
+
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'com.h2database:h2'

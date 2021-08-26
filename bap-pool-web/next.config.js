@@ -1,5 +1,8 @@
 module.exports = {
   images: {
-    domains: ['maps.googleapis.com'],
+    domains: [
+      'toy-factory-bucket.s3.ap-northeast-2.amazonaws.com',
+      'maps.googleapis.com',
+    ],
   },
 };

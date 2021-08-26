@@ -42,7 +42,7 @@ class MyDocument extends Document {
           <meta property="og:url" content="https://bap-pool.vercel.app" />
           <meta property="og:description" content={'"뭐 먹지?" 결정장애 당신을 위한 5초, 밥풀'} />
           <meta property="og:type" content="website" />
-          <meta property="og:image" content="https://bap-pool.vercel.app/bapoori.png" />
+          <meta property="og:image" content="/ogImage.png" />
           <meta property="og:image:type" content="image/png" />
           <meta property="og:image:width" content="600" />
           <meta property="og:image:height" content="600" />

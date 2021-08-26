@@ -26,6 +26,7 @@ import com.toyfactory.bappool.dto.GooglePlaceDetailResultResponse;
 import com.toyfactory.bappool.dto.GooglePlaceSearchPhotoResponse;
 import com.toyfactory.bappool.dto.GooglePlaceSearchResponse;
 import com.toyfactory.bappool.dto.GooglePlaceSearchResultResponse;
+import com.toyfactory.bappool.util.S3Bucket;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +38,7 @@ import lombok.extern.slf4j.Slf4j;
 public class EateryService {
 
 	private final EateryRepository eateryRepository;
+	private final S3Bucket s3Bucket;
 
 	@Value("${api-key}")
 	private String apiKey;
@@ -56,17 +58,17 @@ public class EateryService {
 		places.forEach(place -> {
 			String id = place.getPlace_id();
 			if (!eateryRepository.existsById(id)) {
-				String photoReference = Optional.ofNullable(place.getPhotos())
+				String imageReference = Optional.ofNullable(place.getPhotos())
 					.flatMap(ref -> ref.stream()
-							.findFirst()
-							.map(GooglePlaceSearchPhotoResponse::getPhoto_reference))
+						.findFirst()
+						.map(GooglePlaceSearchPhotoResponse::getPhoto_reference))
 					.orElse(null);
 
-				EateryCreate request = new EateryCreate(id, 0, photoReference);
+				EateryCreate request = new EateryCreate(id, 0, imageReference);
 				create(request);
 			}
-
 			EateryResponse response = new EateryResponse(place, lat, lng);
+
 			if (openPlace.size() < 5) {
 				EateryDetailResponse eateryDetail = findById(id);
 				response.updateDetail(eateryDetail);
@@ -79,19 +81,28 @@ public class EateryService {
 	public EateryDetailResponse findById(String id) {
 		Eatery eatery = eateryRepository.findById(id)
 			.orElseThrow(() -> new EntityNotFoundException("해당하는 Eatery를 찾을 수 없습니다."));
-		String url = eatery.getUrl();
 
-		if (url == null) {
-			url = callGooglePlaceDetailApi(id).getUrl();
-			updateById(id, new EateryUpdate(eatery, url));
+		if (eatery.getUrl() == null || eatery.getPhotoUrl() == null) {
+			updateById(id);
 		}
 
-		return new EateryDetailResponse(eatery, apiKey);
+		return new EateryDetailResponse(eatery);
 	}
 
-	private void updateById(String id, EateryUpdate updateEatery) {
-		Eatery newEatery = updateEatery.toEntity(id);
-		eateryRepository.save(newEatery);
+	private void updateById(String id) {
+		Eatery eatery = eateryRepository.findById(id)
+			.orElseThrow(() -> new EntityNotFoundException("해당하는 Eatery를 찾을 수 없습니다."));
+
+		String url = Optional.ofNullable(eatery.getUrl())
+			.orElseGet(() -> Optional.ofNullable(callGooglePlaceDetailApi(id).getUrl()).orElse(null));
+
+		String photoUrl = Optional.ofNullable(eatery.getPhotoUrl())
+			.orElseGet(() -> Optional.ofNullable(eatery.getPhotoReference())
+				.map(ref -> s3Bucket.upload(callGooglePlacePhotoApi(ref)))
+				.orElse(null));
+
+		EateryUpdate newEatery = new EateryUpdate(eatery, url, photoUrl);
+		eateryRepository.save(newEatery.toEntity());
 	}
 
 	public void updateClickById(String id) {
@@ -99,7 +110,8 @@ public class EateryService {
 			.orElseThrow(() -> new EntityNotFoundException("해당하는 Eatery를 찾을 수 없습니다."));
 
 		EateryUpdate updateEatery = new EateryUpdate(eatery);
-		Eatery newEatery = updateEatery.toEntity(id);
+		updateEatery.updateClick();
+		Eatery newEatery = updateEatery.toEntity();
 		eateryRepository.save(newEatery);
 	}
 
@@ -136,6 +148,22 @@ public class EateryService {
 		log.info("[Google Place Nearby Search API Response Code] " + response.getStatusCode());
 
 		return response.getBody().getResults();
+	}
+
+	private byte[] callGooglePlacePhotoApi(String photoReference) {
+		String baseUrl = "https://maps.googleapis.com/maps/api/place/photo";
+
+		UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(baseUrl)
+			.queryParam("maxwidth", 150)
+			.queryParam("maxheight", 150)
+			.queryParam("photoreference", photoReference)
+			.queryParam("key", apiKey)
+			.build();
+
+		ResponseEntity<byte[]> response = setRestTemplate().getForEntity(uriComponents.toUriString(),
+			byte[].class);
+
+		return response.getBody();
 	}
 
 	private RestTemplate setRestTemplate() {

@@ -16,29 +16,41 @@ public class EateryUpdate {
 	@NotNull
 	private int click;
 
-	private String photoReference;
-
 	private String url;
 
-	public EateryUpdate(Eatery eatery, String url) {
+	private String photoReference;
+
+	private String photoUrl;
+
+	public EateryUpdate(Eatery eatery, String url, String photoUrl) {
 		this.id = eatery.getId();
 		this.click = eatery.getClick();
 		this.photoReference = eatery.getPhotoReference();
 		this.url = url;
+		this.photoUrl = photoUrl;
 	}
 
 	public EateryUpdate(Eatery eatery) {
 		this.id = eatery.getId();
-		this.click = eatery.getClick() + 1;
+		this.click = eatery.getClick();
 		this.url = eatery.getUrl();
+		this.photoReference = eatery.getPhotoReference();
+		this.photoUrl = eatery.getPhotoUrl();
 	}
 
-	public Eatery toEntity(String id) {
+	public void updateClick() {
+		this.click++;
+	}
+
+	public Eatery toEntity() {
 		return Eatery.builder()
 			.id(id)
 			.click(click)
-			.photoReference(photoReference)
+			.photoUrl(photoUrl)
 			.url(url)
+			.photoReference(photoReference)
+			.photoUrl(photoUrl)
 			.build();
 	}
+
 }

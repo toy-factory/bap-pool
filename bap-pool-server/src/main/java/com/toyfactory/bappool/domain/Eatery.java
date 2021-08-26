@@ -24,12 +24,16 @@ public class Eatery {
 	@Lob
 	private String photoReference;
 
+	@Lob
+	private String photoUrl;
+
 	@Builder
-	public Eatery(String id, int click, String url, String photoReference) {
+	public Eatery(String id, int click, String url, String photoReference, String photoUrl) {
 		this.id = id;
 		this.click = click;
 		this.url = url;
 		this.photoReference = photoReference;
+		this.photoUrl = photoUrl;
 	}
 
 }
