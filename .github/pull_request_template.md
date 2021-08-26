@@ -1,1 +1,6 @@
-- It closes # (`#issue number` or `none`)
+<!-- 
+ex) 
+  - It closes #1234
+  - It closes none
+-->
+- It closes # 
