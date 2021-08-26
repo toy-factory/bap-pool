@@ -8,6 +8,7 @@ import {
 import Header from '#/components/Header';
 import EateryCardList from '#/components/EateryCardList';
 import Template from '#/components/Template';
+import Spinner from '#/components/Spinner';
 import {
   Eatery,
   EateryData,
@@ -38,10 +39,12 @@ const Home = () => {
   const [eateriesPool, setEateriesPool] = useState<EntireEateries[]>([]);
   const [eateries, setEateries] = useState<Eatery[]>([]);
   const [isPicking, setIsPicking] = useState(false);
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
 
   useEffect(() => {
     const fetchEateries = async ({ lat, lng }: {lat: number, lng: number}) => {
       let eateriesData: EateryData[] = [];
+      setIsInitialLoading(true);
       try {
         eateriesData = await ApiRequest.getEateries({
           lat,
@@ -51,6 +54,8 @@ const Home = () => {
         // eslint-disable-next-line no-alert
         alert('현재 서버와 연결이 올바르지 않습니다. 다음에 다시 접속해주세요.');
         return;
+      } finally {
+        setIsInitialLoading(false);
       }
 
       const entireEateriesData = eateriesData.map(
@@ -175,7 +180,10 @@ const Home = () => {
   return (
     <Template className={classes.template}>
       <Header pickRandomEatery={pickRandomEatery} />
-      <EateryCardList eateries={eateries} handleRemove={handleRemove} />
+      { isInitialLoading ? <Spinner color="secondary" />
+        : (
+          <EateryCardList eateries={eateries} handleRemove={handleRemove} />
+        )}
     </Template>
   );
 };
