@@ -1,0 +1,1 @@
+- It closes # (`#issue number` or `none`)
