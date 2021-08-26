@@ -8,7 +8,8 @@ const useStyles = makeStyles((theme) => ({
     minHeight: '100vh',
   },
   main: {
-    flexGrow: 1,
+    display: 'flex',
+    flexDirection: 'column',
     [theme.breakpoints.up(640)]: {
       width: '50%',
       flexGrow: 0,
