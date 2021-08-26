@@ -76,7 +76,8 @@ const EateryCardFront = ({
       <div
         className={classes.imageContainer}
         style={{
-          width: currentWidth / 3,
+          minWidth: currentWidth / 3,
+          maxWidth: currentWidth / 3,
         }}
       >
         {isLoading
