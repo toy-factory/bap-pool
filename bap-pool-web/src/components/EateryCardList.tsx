@@ -5,13 +5,23 @@ import {
 } from 'react';
 import {
   makeStyles,
+  Typography,
 } from '@material-ui/core';
+import Image from 'next/image';
 
 import EateryCard from './EateryCard/EateryCard';
 import { Eatery } from '#/types/Eatery';
 import useWindowSize from '#/hooks/useWindowSize';
 
 const useStyles = makeStyles({
+  noEateries: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexGrow: 1,
+    gap: '1.5rem',
+  },
   list: {
     position: 'relative',
     perspective: 1000,
@@ -44,6 +54,16 @@ const EateryCardList = ({ eateries, handleRemove } : EateryCardListProps) => {
   useEffect(() => {
     setCardWidth(cardListRef.current?.clientWidth ?? 360);
   }, [width]);
+
+  if (eateries.length === 0) {
+    return (
+      <div className={classes.noEateries}>
+        <Image width="300" height="300" alt="papoori" src="/papoori.png" />
+        <Typography>현재 영업중인 가게를 찾을 수 없어요.</Typography>
+        <Typography>다음에 다시 시도해주세요!</Typography>
+      </div>
+    );
+  }
 
   return (
     <ul className={classes.list} ref={cardListRef}>
