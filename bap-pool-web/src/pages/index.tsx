@@ -1,4 +1,6 @@
-import { makeStyles } from '@material-ui/core';
+import {
+  makeStyles,
+} from '@material-ui/core';
 import {
   useCallback,
   useState,
@@ -180,9 +182,18 @@ const Home = () => {
   return (
     <Template className={classes.template}>
       <Header pickRandomEatery={pickRandomEatery} />
-      { isInitialLoading ? <Spinner color="secondary" />
+      { isInitialLoading
+        ? (
+          <Spinner
+            color="secondary"
+            text="가까운 가게를 불러오고 있어요."
+          />
+        )
         : (
-          <EateryCardList eateries={eateries} handleRemove={handleRemove} />
+          <EateryCardList
+            eateries={eateries}
+            handleRemove={handleRemove}
+          />
         )}
     </Template>
   );
