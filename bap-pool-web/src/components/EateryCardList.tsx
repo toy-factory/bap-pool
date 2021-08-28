@@ -46,14 +46,14 @@ const HEIGHT_PER_CARD_PERCENT = 100;
 
 const EateryCardList = ({ eateries, handleRemove } : EateryCardListProps) => {
   const classes = useStyles();
-  const { width } = useWindowSize();
   const [cardWidth, setCardWidth] = useState(360);
+  const { width } = useWindowSize();
 
   const cardListRef = useRef<HTMLUListElement>(null);
 
   useEffect(() => {
     setCardWidth(cardListRef.current?.clientWidth ?? 360);
-  }, [width]);
+  }, [eateries, width]);
 
   if (eateries.length === 0) {
     return (
