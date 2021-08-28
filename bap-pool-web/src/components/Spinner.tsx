@@ -5,10 +5,15 @@ import CircularProgress, { CircularProgressProps } from '@material-ui/core/Circu
 const useStyles = makeStyles({
   spinnerContainer: {
     display: 'flex',
+    flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
     height: '100%',
+    gap: '2rem',
+  },
+  text: {
+    whiteSpace: 'pre-line',
   },
 });
 
@@ -22,7 +27,7 @@ const Spinner = ({ text, ...props }: SpinnerProps) => {
   return (
     <div className={classes.spinnerContainer}>
       <CircularProgress size="10rem" {...props} />
-      {text && <Typography>{text}</Typography>}
+      {text && <Typography align="center" className={classes.text}>{text}</Typography>}
     </div>
   );
 };
