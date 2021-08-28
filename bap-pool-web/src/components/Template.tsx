@@ -28,9 +28,9 @@ const Template = ({ children, className }: TemplateProps) => {
 
   return (
     <div className={[className, classes.root].join(' ')}>
-      <main className={classes.main}>
+      <div className={classes.main}>
         {children}
-      </main>
+      </div>
     </div>
   );
 };
