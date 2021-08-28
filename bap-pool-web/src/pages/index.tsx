@@ -186,7 +186,7 @@ const Home = () => {
         ? (
           <Spinner
             color="secondary"
-            text="가까운 가게를 불러오고 있어요."
+            text="식당 카드를 밀어서 다른 식당을 불러올 수 있어요."
           />
         )
         : (
