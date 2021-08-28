@@ -174,7 +174,7 @@ public class EateryService {
 		ResponseEntity<byte[]> response = setRestTemplate().getForEntity(uriComponents.toUriString(),
 			byte[].class);
 
-		if (response.getStatusCode().equals(403)) {
+		if (response.getStatusCodeValue() == 403) {
 			throw new GoogleApiLimitException();
 		}
 
