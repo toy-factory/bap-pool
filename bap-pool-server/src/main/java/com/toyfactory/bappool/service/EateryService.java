@@ -26,6 +26,7 @@ import com.toyfactory.bappool.dto.GooglePlaceDetailResultResponse;
 import com.toyfactory.bappool.dto.GooglePlaceSearchPhotoResponse;
 import com.toyfactory.bappool.dto.GooglePlaceSearchResponse;
 import com.toyfactory.bappool.dto.GooglePlaceSearchResultResponse;
+import com.toyfactory.bappool.exception.GoogleApiLimitException;
 import com.toyfactory.bappool.util.S3Bucket;
 
 import lombok.RequiredArgsConstructor;
@@ -126,7 +127,12 @@ public class EateryService {
 
 		ResponseEntity<GooglePlaceDetailResponse> response = setRestTemplate().getForEntity(uriComponents.toUriString(),
 			GooglePlaceDetailResponse.class);
+
 		log.info("[Google Place Details API Response Code] " + response.getStatusCode());
+
+		if (response.getBody().getStatus().equals("OVER_QUERY_LIMIT")) {
+			throw new GoogleApiLimitException();
+		}
 
 		return response.getBody().getResult();
 	}
@@ -145,7 +151,12 @@ public class EateryService {
 
 		ResponseEntity<GooglePlaceSearchResponse> response = setRestTemplate().getForEntity(uriComponents.toUriString(),
 			GooglePlaceSearchResponse.class);
+
 		log.info("[Google Place Nearby Search API Response Code] " + response.getStatusCode());
+
+		if (response.getBody().getStatus().equals("OVER_QUERY_LIMIT")) {
+			throw new GoogleApiLimitException();
+		}
 
 		return response.getBody().getResults();
 	}
@@ -162,6 +173,10 @@ public class EateryService {
 
 		ResponseEntity<byte[]> response = setRestTemplate().getForEntity(uriComponents.toUriString(),
 			byte[].class);
+
+		if (response.getStatusCode().equals(403)) {
+			throw new GoogleApiLimitException();
+		}
 
 		return response.getBody();
 	}
