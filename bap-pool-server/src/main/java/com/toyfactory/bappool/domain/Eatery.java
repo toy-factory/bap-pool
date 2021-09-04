@@ -17,6 +17,9 @@ public class Eatery {
 	private String id;
 
 	@NotNull
+	private String category;
+
+	@NotNull
 	private int click;
 
 	private String url;
@@ -28,8 +31,9 @@ public class Eatery {
 	private String photoUrl;
 
 	@Builder
-	public Eatery(String id, int click, String url, String photoReference, String photoUrl) {
+	public Eatery(String id, String category, int click, String url, String photoReference, String photoUrl) {
 		this.id = id;
+		this.category = category;
 		this.click = click;
 		this.url = url;
 		this.photoReference = photoReference;
