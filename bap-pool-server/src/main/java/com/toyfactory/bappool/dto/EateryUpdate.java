@@ -16,16 +16,31 @@ public class EateryUpdate {
 	@NotNull
 	private int click;
 
+	@NotNull
+	private String name;
+
+	@NotNull
+	private double lat;
+
+	@NotNull
+	private double lng;
+
+	private String category;
+
 	private String url;
 
 	private String photoReference;
 
 	private String photoUrl;
 
-	public EateryUpdate(Eatery eatery, String url, String photoUrl) {
+	public EateryUpdate(Eatery eatery, String category, String url, String photoUrl) {
 		this.id = eatery.getId();
 		this.click = eatery.getClick();
+		this.name = eatery.getName();
+		this.lat = eatery.getLat();
+		this.lng = eatery.getLng();
 		this.photoReference = eatery.getPhotoReference();
+		this.category = category;
 		this.url = url;
 		this.photoUrl = photoUrl;
 	}
@@ -33,6 +48,10 @@ public class EateryUpdate {
 	public EateryUpdate(Eatery eatery) {
 		this.id = eatery.getId();
 		this.click = eatery.getClick();
+		this.name = eatery.getName();
+		this.lat = eatery.getLat();
+		this.lng = eatery.getLng();
+		this.category = eatery.getCategory();
 		this.url = eatery.getUrl();
 		this.photoReference = eatery.getPhotoReference();
 		this.photoUrl = eatery.getPhotoUrl();
@@ -46,7 +65,10 @@ public class EateryUpdate {
 		return Eatery.builder()
 			.id(id)
 			.click(click)
-			.photoUrl(photoUrl)
+			.name(name)
+			.lat(lat)
+			.lng(lng)
+			.category(category)
 			.url(url)
 			.photoReference(photoReference)
 			.photoUrl(photoUrl)
