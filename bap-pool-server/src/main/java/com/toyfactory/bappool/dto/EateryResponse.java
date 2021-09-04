@@ -12,6 +12,8 @@ public class EateryResponse {
 
 	private String placeName;
 
+	private String category;
+
 	private String thumbnailUrl;
 
 	private double distance;
@@ -30,6 +32,7 @@ public class EateryResponse {
 	}
 
 	public void updateDetail(EateryDetailResponse eateryDetail) {
+		this.category = eateryDetail.getCategory();
 		this.thumbnailUrl = eateryDetail.getThumbnailUrl();
 		this.click = eateryDetail.getClick();
 		this.url = eateryDetail.getUrl();

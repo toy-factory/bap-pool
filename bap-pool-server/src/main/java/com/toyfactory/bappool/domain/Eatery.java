@@ -19,6 +19,17 @@ public class Eatery {
 	@NotNull
 	private int click;
 
+	@NotNull
+	private String name;
+
+	@NotNull
+	private double lat;
+
+	@NotNull
+	private double lng;
+
+	private String category;
+
 	private String url;
 
 	@Lob
@@ -28,9 +39,14 @@ public class Eatery {
 	private String photoUrl;
 
 	@Builder
-	public Eatery(String id, int click, String url, String photoReference, String photoUrl) {
+	public Eatery(String id, int click, String name, double lat, double lng, String category, String url,
+		String photoReference, String photoUrl) {
 		this.id = id;
 		this.click = click;
+		this.name = name;
+		this.lat = lat;
+		this.lng = lng;
+		this.category = category;
 		this.url = url;
 		this.photoReference = photoReference;
 		this.photoUrl = photoUrl;
