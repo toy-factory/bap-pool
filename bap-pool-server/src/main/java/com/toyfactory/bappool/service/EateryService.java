@@ -216,8 +216,6 @@ public class EateryService {
 			.queryParam("sort", "accuracy")
 			.build();
 
-		System.out.println(uriComponents.toString());
-
 		ResponseEntity<KakaoKeywordSearchResponse> response = setRestTemplate().exchange(uriComponents.toString(),
 			HttpMethod.GET, new HttpEntity<String>(httpHeaders), KakaoKeywordSearchResponse.class);
 
