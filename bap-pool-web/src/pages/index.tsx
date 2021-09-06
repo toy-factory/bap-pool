@@ -134,6 +134,7 @@ const Home = () => {
             click: newEateryDetailData.click,
             url: newEateryDetailData.url,
             thumbnailUrl: newEateryDetailData.thumbnailUrl,
+            category: newEateryDetailData.category,
           },
           isFlipped: false,
           isLoading: false,
