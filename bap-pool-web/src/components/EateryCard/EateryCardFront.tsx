@@ -93,7 +93,6 @@ const EateryCardFront = ({
               layout="fill"
               objectFit="contain"
               draggable={false}
-
             />
           )}
       </div>

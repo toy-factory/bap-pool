@@ -6,6 +6,7 @@
     "build": "next build",
     "start": "next start",
     "type-check": "tsc",
+    "netlify-deploy": "next build && next export",
     "eslint": "eslint ./src --ext .jsx,.js,.tsx,.ts --cache --ignore-pattern .gitignore",
     "eslint:fix": "eslint --fix ./src --ext .jsx,.js,.tsx,.ts --cache --ignore-pattern .gitignore"
   },
