@@ -16,12 +16,24 @@ public class EateryCreate {
 	@NotNull
 	private int click;
 
+	@NotNull
+	private String name;
+
+	@NotNull
+	private double lat;
+
+	@NotNull
+	private double lng;
+
 	private String photoReference;
 
 	public Eatery toEntity() {
 		return Eatery.builder()
 			.id(id)
 			.click(click)
+			.name(name)
+			.lat(lat)
+			.lng(lng)
 			.photoReference(photoReference)
 			.build();
 	}

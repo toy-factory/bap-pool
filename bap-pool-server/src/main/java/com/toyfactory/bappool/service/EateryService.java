@@ -7,6 +7,9 @@ import java.util.Optional;
 import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
@@ -26,6 +29,8 @@ import com.toyfactory.bappool.dto.GooglePlaceDetailResultResponse;
 import com.toyfactory.bappool.dto.GooglePlaceSearchPhotoResponse;
 import com.toyfactory.bappool.dto.GooglePlaceSearchResponse;
 import com.toyfactory.bappool.dto.GooglePlaceSearchResultResponse;
+import com.toyfactory.bappool.dto.KakaoKeywordSearchResponse;
+import com.toyfactory.bappool.exception.GoogleApiLimitException;
 import com.toyfactory.bappool.util.S3Bucket;
 
 import lombok.RequiredArgsConstructor;
@@ -40,8 +45,11 @@ public class EateryService {
 	private final EateryRepository eateryRepository;
 	private final S3Bucket s3Bucket;
 
-	@Value("${api-key}")
-	private String apiKey;
+	@Value("${google-api-key}")
+	private String googleApiKey;
+
+	@Value("${kakao-api-key}")
+	private String kakaoApiKey;
 
 	private String create(EateryCreate request) {
 		Eatery eatery = request.toEntity();
@@ -58,13 +66,17 @@ public class EateryService {
 		places.forEach(place -> {
 			String id = place.getPlace_id();
 			if (!eateryRepository.existsById(id)) {
+				String placeName = place.getName();
+				double placeLat = place.getGeometry().getLocation().getLat();
+				double placeLng = place.getGeometry().getLocation().getLng();
+
 				String imageReference = Optional.ofNullable(place.getPhotos())
 					.flatMap(ref -> ref.stream()
 						.findFirst()
 						.map(GooglePlaceSearchPhotoResponse::getPhoto_reference))
 					.orElse(null);
 
-				EateryCreate request = new EateryCreate(id, 0, imageReference);
+				EateryCreate request = new EateryCreate(id, 0, placeName, placeLat, placeLng, imageReference);
 				create(request);
 			}
 			EateryResponse response = new EateryResponse(place, lat, lng);
@@ -82,7 +94,7 @@ public class EateryService {
 		Eatery eatery = eateryRepository.findById(id)
 			.orElseThrow(() -> new EntityNotFoundException("해당하는 Eatery를 찾을 수 없습니다."));
 
-		if (eatery.getUrl() == null || eatery.getPhotoUrl() == null) {
+		if (eatery.getUrl() == null || eatery.getPhotoUrl() == null || eatery.getCategory() == null) {
 			updateById(id);
 		}
 
@@ -93,6 +105,13 @@ public class EateryService {
 		Eatery eatery = eateryRepository.findById(id)
 			.orElseThrow(() -> new EntityNotFoundException("해당하는 Eatery를 찾을 수 없습니다."));
 
+		// Kakao API 호출
+		KakaoKeywordSearchResponse categoryResponse = callKakaoKeywordSearchApi(eatery.getName(), eatery.getLng(),
+			eatery.getLat());
+		String category =
+			categoryResponse.getMeta().getTotal_count() == 0 ? null :
+				categoryResponse.getDocuments().get(0).getCategory_name();
+
 		String url = Optional.ofNullable(eatery.getUrl())
 			.orElseGet(() -> Optional.ofNullable(callGooglePlaceDetailApi(id).getUrl()).orElse(null));
 
@@ -101,7 +120,7 @@ public class EateryService {
 				.map(ref -> s3Bucket.upload(callGooglePlacePhotoApi(ref)))
 				.orElse(null));
 
-		EateryUpdate newEatery = new EateryUpdate(eatery, url, photoUrl);
+		EateryUpdate newEatery = new EateryUpdate(eatery, category, url, photoUrl);
 		eateryRepository.save(newEatery.toEntity());
 	}
 
@@ -121,12 +140,17 @@ public class EateryService {
 		UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(baseUrl)
 			.queryParam("place_id", id)
 			.queryParam("fields", "url")
-			.queryParam("key", apiKey)
+			.queryParam("key", googleApiKey)
 			.build();
 
 		ResponseEntity<GooglePlaceDetailResponse> response = setRestTemplate().getForEntity(uriComponents.toUriString(),
 			GooglePlaceDetailResponse.class);
+
 		log.info("[Google Place Details API Response Code] " + response.getStatusCode());
+
+		if (response.getBody().getStatus().equals("OVER_QUERY_LIMIT")) {
+			throw new GoogleApiLimitException();
+		}
 
 		return response.getBody().getResult();
 	}
@@ -140,12 +164,17 @@ public class EateryService {
 			.queryParam("radius", "500")
 			.queryParam("type", "restaurant")
 			.queryParam("opennow", true)
-			.queryParam("key", apiKey)
+			.queryParam("key", googleApiKey)
 			.build();
 
 		ResponseEntity<GooglePlaceSearchResponse> response = setRestTemplate().getForEntity(uriComponents.toUriString(),
 			GooglePlaceSearchResponse.class);
+
 		log.info("[Google Place Nearby Search API Response Code] " + response.getStatusCode());
+
+		if (response.getBody().getStatus().equals("OVER_QUERY_LIMIT")) {
+			throw new GoogleApiLimitException();
+		}
 
 		return response.getBody().getResults();
 	}
@@ -157,11 +186,40 @@ public class EateryService {
 			.queryParam("maxwidth", 150)
 			.queryParam("maxheight", 150)
 			.queryParam("photoreference", photoReference)
-			.queryParam("key", apiKey)
+			.queryParam("key", googleApiKey)
 			.build();
 
 		ResponseEntity<byte[]> response = setRestTemplate().getForEntity(uriComponents.toUriString(),
 			byte[].class);
+
+		if (response.getStatusCodeValue() == 403) {
+			throw new GoogleApiLimitException();
+		}
+
+		return response.getBody();
+	}
+
+	private KakaoKeywordSearchResponse callKakaoKeywordSearchApi(String placeName, double lng, double lat) {
+		HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.add("Authorization", kakaoApiKey);
+
+		String baseUrl = "https://dapi.kakao.com/v2/local/search/keyword.json";
+
+		UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(baseUrl)
+			.queryParam("query", placeName)
+			.queryParam("category_group_code", "FD6")
+			.queryParam("x", lng)
+			.queryParam("y", lat)
+			.queryParam("radius", 100)
+			.queryParam("page", 1)
+			.queryParam("size", 1)
+			.queryParam("sort", "accuracy")
+			.build();
+
+		ResponseEntity<KakaoKeywordSearchResponse> response = setRestTemplate().exchange(uriComponents.toString(),
+			HttpMethod.GET, new HttpEntity<String>(httpHeaders), KakaoKeywordSearchResponse.class);
+
+		log.info("[Kakao Local Keyword Search API Response Code] " + response.getStatusCode());
 
 		return response.getBody();
 	}

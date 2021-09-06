@@ -9,7 +9,7 @@ import Divider from '@material-ui/core/Divider';
 import ApiRequest from '#/ApiRequest';
 import { EateryData } from '#/types/Eatery';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   eateryCardFront: {
     flexGrow: 1,
     paddingTop: 0,
@@ -39,7 +39,10 @@ const useStyles = makeStyles({
   button: {
     alignSelf: 'flex-end',
   },
-});
+  highlighten: {
+    color: theme.palette.secondary.dark,
+  },
+}));
 
 interface EateryCardFrontProps {
   id: string;
@@ -103,11 +106,26 @@ const EateryCardFront = ({
           <Typography variant="h5" component="h2">
             {isLoading ? <Skeleton /> : data.placeName}
           </Typography>
-          <Typography className={classes.pos} color="textSecondary">
-            {isLoading ? <Skeleton /> : `다른 바푸리가 ${data.click}번 클릭했어요.`}
+          <Typography variant="caption">
+            {isLoading ? <Skeleton /> : data.category}
           </Typography>
-          <Typography variant="body2" component="p">
-            {isLoading ? <Skeleton /> : `여기서부터 ${data.distance}m 만큼 떨어져 있어요.`}
+          <Typography className={classes.pos} color="textSecondary" variant="body1">
+            {isLoading ? <Skeleton /> : (
+              <>
+                다른 바푸리가
+                <Typography component="span" className={classes.highlighten}>{` ${data.click}`}</Typography>
+                번 클릭했어요
+              </>
+            )}
+          </Typography>
+          <Typography variant="body2">
+            {isLoading ? <Skeleton /> : (
+              <>
+                여기서부터
+                <Typography component="span" className={classes.highlighten}>{` ${data.distance}`}</Typography>
+                m 만큼 떨어져 있어요.
+              </>
+            )}
           </Typography>
         </div>
         <div>
