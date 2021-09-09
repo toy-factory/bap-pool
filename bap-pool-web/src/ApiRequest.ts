@@ -5,7 +5,6 @@ import { EateryData } from '#/types/Eatery';
 const ApiRequest = (() => {
   const apiClient = axios.create({
     baseURL: 'https://bappool.tk/api',
-    timeout: 3000,
   });
 
   return {
