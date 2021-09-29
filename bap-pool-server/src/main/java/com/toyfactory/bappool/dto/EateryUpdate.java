@@ -61,6 +61,18 @@ public class EateryUpdate {
 		this.click++;
 	}
 
+	public void updateCategory(String category) {
+		this.category = category;
+	}
+
+	public void updateUrl(String url) {
+		this.url = url;
+	}
+
+	public void updatePhotoUrl(String photoUrl) {
+		this.photoUrl = photoUrl;
+	}
+
 	public Eatery toEntity() {
 		return Eatery.builder()
 			.id(id)
