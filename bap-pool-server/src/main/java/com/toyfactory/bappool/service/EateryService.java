@@ -206,7 +206,7 @@ public class EateryService {
 				.build())
 			.retrieve()
 			.bodyToMono(byte[].class);
-	}
+  }
 
 	private Mono<KakaoKeywordSearchResponse> callKakaoKeywordSearchApi(String placeName, double lng, double lat) {
 
